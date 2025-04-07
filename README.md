@@ -60,7 +60,7 @@ sdm730/sdm730g
 - performance:  1.8+2.2g, boost 1.8+2.2g, min 0.5+0.6
 - fast:         1.8+1.9g, boost 1.8+2.2g, min 0.5+1.2
 
-sdm690
+sdm680
 - Sorry, this processor is in the "fixed" category.
 
 sdm675
