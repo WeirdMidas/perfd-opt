@@ -6,7 +6,23 @@ The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), 
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
-## Profiles
+## CPU Scaling Mode Support
+
+1. FIXED
+- Processors with *fixed* maximum and minimum frequencies, with no possibility of fine-tuning by profile.
+- Technical limitations: no `schedtune`, `uclamp`, or full EAS.
+- Automatic boosts are usually controlled by firmware (e.g. RPMh).
+- Example: Snapdragon 680, Snapdragon 665, some older MediaTek.
+
+2. PER-PROFILE
+- Processors with technical support for per-profile adjustments: foreground, background, games, etc.
+- Available features: `schedtune.boost`, `uclamp_min/max`, `task_groups`, full EAS.
+- Allows granular control of performance vs battery.
+- Example: Snapdragon 720G, 765G, 8xx, some recent Exynos.
+
+Note: Devices classified as FIXED can still see significant gains from tweaking corectl, task priorities, and governors, even if they do not have fully controllable perf boost.
+
+### Profiles & Supported Devices
 
 - powersave: based on balance mode, but with lower max frequency
 - balance: smoother than the stock config with lower power consumption
@@ -44,6 +60,9 @@ sdm730/sdm730g
 - performance:  1.8+2.2g, boost 1.8+2.2g, min 0.5+0.6
 - fast:         1.8+1.9g, boost 1.8+2.2g, min 0.5+1.2
 
+sdm690
+- Sorry, this processor is in the "fixed" category.
+
 sdm675
 - powersave:    1.7+1.5g, boost 1.7+1.7g, min 0.3+0.3
 - balance:      1.7+1.7g, boost 1.7+1.9g, min 0.5+0.6
@@ -59,13 +78,13 @@ sdm710/sdm712
 
 ## Requirements
 
-1. Android >= 8.0
+1. Android 11-14
 2. Rooted
-3. Magisk >= 19.0
+3. Magisk or KSU
 
 ## Installation
 
-1. Download zip in [Release Page](https://github.com/yc9559/perfd-opt/releases)
+1. Download zip in Release Page
 2. Flash in Magisk manager
 3. Reboot
 4. Check whether `/sdcard/Android/panel_powercfg.txt` exists
@@ -88,22 +107,10 @@ Install [vtools](https://www.coolapk.com/apk/com.omarea.vtools) and bind APPs to
 
 ## Credit
 
+
 ```plain
-@屁屁痒
-provide /vendor/etc & sched tunables on Snapdragon 845
-
-@林北蓋唱秋
-provide /vendor/etc on Snapdragon 675
-
-@酪安小煸
-provide /vendor/etc on Snapdragon 710
-
-@沉迷学习日渐膨胀的小学僧
-help testing on Snapdragon 855
-
-@NeonXeon
-provide information about dynamic stune
-
-@rfigo
-provide information about dynamic stune
+Matt Yang — For the Original Module and my inspiration for create this.
+Tytydraco - Another inspiration for my attempt to create the old atlas.
+yinwanxi - libcgroup and also for his discoveries, and also for the inspiration to create OPP PER-PROFILE as an addition.
+NotZeeta - Brazilians like him and me never give up, and he is one of the good ones, too bad he abandoned YAKT, I hope it wasn't because of a headache.
 ```
