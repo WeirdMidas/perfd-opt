@@ -88,7 +88,6 @@ sdm710/sdm712
 2. Flash in Magisk manager
 3. Reboot
 4. Check whether `/sdcard/Android/panel_powercfg.txt` exists
-5. At every boot, some SOCs need to wait 15-30 minutes to stabilize completely (As is the case with my sdm680).
 
 ## Switch modes
 
