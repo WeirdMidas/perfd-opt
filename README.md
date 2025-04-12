@@ -6,7 +6,23 @@ The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), 
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
-## Profiles
+## CPU Scaling Mode Support
+
+1. FIXED
+- Processors with *fixed* maximum and minimum frequencies, with no possibility of fine-tuning by profile.
+- Technical limitations: no `schedtune`, `uclamp`, or full EAS.
+- Automatic boosts are usually controlled by firmware (e.g. RPMh).
+- Example: Snapdragon 680, Snapdragon 665, some older MediaTek.
+
+2. PER-PROFILE
+- Processors with technical support for per-profile adjustments: foreground, background, games, etc.
+- Available features: `schedtune.boost`, `uclamp_min/max`, `task_groups`, full EAS.
+- Allows granular control of performance vs battery.
+- Example: Snapdragon 720G, 765G, 8xx, some recent Exynos.
+
+Note: Devices classified as FIXED can still see significant gains from tweaking corectl, task priorities, and governors, even if they do not have fully controllable perf boost.
+
+### Profiles & Supported Devices
 
 - powersave: based on balance mode, but with lower max frequency
 - balance: smoother than the stock config with lower power consumption
@@ -43,6 +59,9 @@ sdm730/sdm730g
 - balance:      1.7+1.9g, boost 1.7+2.1g, min 0.5+0.6
 - performance:  1.8+2.2g, boost 1.8+2.2g, min 0.5+0.6
 - fast:         1.8+1.9g, boost 1.8+2.2g, min 0.5+1.2
+
+sdm680
+- Sorry, this processor is in the "fixed" category.
 
 sdm675
 - powersave:    1.7+1.5g, boost 1.7+1.7g, min 0.3+0.3
