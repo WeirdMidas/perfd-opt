@@ -78,9 +78,8 @@ sdm710/sdm712
 
 ## Requirements
 
-1. Android >= 8.0
-2. Rooted
-3. Magisk >= 19.0
+1. Android 10-15
+2. Rooted with Magisk or KSU
 
 ## Installation
 
