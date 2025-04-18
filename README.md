@@ -6,6 +6,10 @@ The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), 
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
+### Features
+- Continues Matt Yang's idea, focusing on being energy efficient even under heavy load but updated for today, where more SOCs need better efficiency due to limitations such as capped batteries, kernels that have been updated and lost used functions or the company not knowing how to optimize correctly.
+- Improves the efficiency of Adreno GPUs, reducing the chances of it being a bottleneck and improving both energy cost and performance even under heavy load.
+
 ## CPU Scaling Mode Support
 
 1. FIXED
@@ -22,7 +26,7 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 
 Note: Devices classified as FIXED can still see significant gains from tweaking corectl, task priorities, and governors, even if they do not have fully controllable perf boost.
 
-### Profiles & Supported Devices
+#### Profiles & Supported Devices
 
 - powersave: based on balance mode, but with lower max frequency
 - balance: smoother than the stock config with lower power consumption
