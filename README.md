@@ -1,74 +1,82 @@
-# Perfd opt
+# XTU Add-on
+![1000003154](https://github.com/user-attachments/assets/461e2985-32ef-400b-a01e-6d6995d9681e)
 
-The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), automatically adjust the `interactive` parameters via simulation and heuristic optimization algorithms, and working on all mainstream devices which use `interactive` as default governor. The recent [WIPE v2](https://github.com/yc9559/wipe-v2), improved simulation supports more features of the kernel and focuses on rendering performance requirements, automatically adjusting the `interactive`+`HMP`+`input boost` parameters. However, after the EAS is merged into the mainline, the simulation difficulty of auto-tuning depends on raise. It is difficult to simulate the logic of the EAS scheduler. In addition, EAS is designed to avoid parameterization at the beginning of design, so for example, the adjustment of schedutil has no obvious effect.  
+"Each new generation of computers demoralizes the previous ones and their creators."
+## Modern and efficient for the end user experience
 
-[WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further. `QTI Boost Framework`, which must be disabled before applying optimization, is able to dynamically override parameters based on perf hint. This project utilizes `QTI Boost Framework` and extends the ability of override custom parameters. When launching APPs or scrolling the screen, applying more aggressive parameters to improve response at an acceptable power penalty. When there is no interaction, use conservative parameters, use small core clusters as much as possible, and run at a higher energy efficiency OPP under heavy load.  
+Older projects like `Uperf`, `Project Wipe`, and Matt Yang's `Perfd Opt` were very good for their time. `Uperf` in particular demonstrated a high degree of evolvability. However, after Matt Yang's disappearance and the disappearance of the `Uperf` code, everything became even more obscure, making `Uperf` a solution that some considered "abandoned." Depending on the device using `Uperf`, it can perform incredibly well or incredibly poorly. And because support has been abandoned, it's difficult to find solutions on the market today that could replace `Uperf's` genius. Even more so, optimizations have become more complicated now, due to the integration of the EAS scheduler, and then trackers like WALT/PELT, which were subsequently integrated years later. This complicated the optimization field and made everything even more complex!
 
-Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
+Based on this, the XTU Add-on is a `scheduler`, `CPU`, and `GPU` optimization tool that aims to achieve two things: unify the scheduler and tracker so they work together, and aims to achieve a fair **balance** between **power consumption** and **performance**. However, rather than adjusting purely based on intuition and guesswork, it's done through knowledge of how the basic EAS scheduler (found on poorly optimized devices), moderately optimized, and highly optimized devices works. This approach allows us to take into account the performance and efficiency needs of each SOC, allowing us to simulate EAS behavior on each SOC, allowing us to improve each one's behavior while respecting its immediate performance needs. For devices with HMP, optimizations are based on Project WIPE, which simulates EAS behavior by taking into account power consumption and rendering performance needs to avoid frame drops. It integrates strategies such as "`rice-to-idle`," optimal use of `small cores`, and "`guidecap`" to allow the scheduler to better guide tasks, as well as additions such as `GameSpace` `Performance Mode`, `Thermal Mode`, and "`Battery Saver Mode`" and other functions In addition to the classic power profiles, it also adds optimizations that depend on various subsystems, such as refresh rate and others. This allows the device to extract its maximum potential, regardless of the situation, meaning the module will always strive to run on the most efficient OPP possible.
 
-## Profiles
+Remember: The focus is to run the task with the lowest OPP and as quickly as possible.
 
-- powersave: based on balance mode, but with lower max frequency
-- balance: smoother than the stock config with lower power consumption
-- performance: dynamic stune boost = 30 with no frequency limitation
-- fast: providing stable performance capacity considering the TDP limitation of device chassis
+Details see [the lead project](https://github.com/WeirdMidas/XTUAddon/commits/master/) & [XTU Add-on commits](https://github.com/WeirdMidas/XTUAddon/commits/master/)    
+
+## Features
+- Includes specific improvements and optimizations for the device's scheduling, CPU, and GPU. Respecting the capabilities, limitations, and specialties of each SOC and its architecture, this in turn allows for the best possible performance from the SOC itself, both in terms of energy efficiency and raw performance.
+- Introduce the "Rice-to-idle" strategy, a form of tracker optimization that allows the CPU to immediately jump to a frequency that finishes the task quickly and then rest immediately, saving as much power as possible while using a linear frequency curve.
+- Use an efficient form of hotplug, based on the performance needs of the clusters, allow the cores to turn off and on in an efficient curve, allowing the CPU to save maximum energy in this aspect.
+- Understand Android's dynamic workload and pin certain tasks that small cores can handle easily. Such as playing videos/media like YouTube, in addition to the SensorService. Allow essentially lightweight tasks, which small cores are designed to handle. However, as the SoC's power is modest, don't pin too many tasks, allowing the Scheduler to have more freedom in this regard.
+- Use additional settings that allow the device to use modern power management technologies, buffers, etc. Allowing the CPU to work and with lower costs per watt.
+- SELinux can still be enabled
+
+## Compatibility
+
+- powersave: based on balance mode, but with lower max frequency. Ideal for saving as much energy as possible with low impact on fluidity
+- balance: smoother than the stock config with lower power consumption. There is no maximum frequency limitation, allowing the device to scale freely between performance demands
+- performance: based on balance, but with added boosts and more aggressiveness in rice to allow better performance per watt (cost~pwr)
+- fast: purely maximum performance, ideal for benchmarks and other extremely demanding tasks. This is achieved by maximizing performance based on the device's base TDP
 
 ```plain
+New Generation
 sdm865
-- powersave:    1.8+1.6+2.4g, boost 1.8+2.0+2.6g, min 0.3+0.7+1.1
-- balance:      1.8+2.0+2.6g, boost 1.8+2.4+2.7g, min 0.7+0.7+1.1
-- performance:  1.8+2.4+2.8g, boost 1.8+2.4+2.8g, min 0.7+0.7+1.1
-- fast:         1.8+2.0+2.7g, boost 1.8+2.4+2.8g, min 0.7+1.2+1.2
-
 sdm855/sdm855+
-- powersave:    1.7+1.6+2.4g, boost 1.7+2.0+2.6g, min 0.3+0.7+0.8
-- balance:      1.7+2.0+2.6g, boost 1.7+2.4+2.7g, min 0.5+0.7+0.8
-- performance:  1.7+2.4+2.8g, boost 1.7+2.4+2.8/2.9g, min 0.5+0.7+0.8
-- fast:         1.7+2.0+2.7g, boost 1.7+2.4+2.8/2.9g, min 0.5+1.2+1.2
-
 sdm845
-- powersave:    1.7+2.0g, boost 1.7+2.4g, min 0.3+0.3
-- balance:      1.7+2.4g, boost 1.7+2.7g, min 0.5+0.8
-- performance:  1.7+2.8g, boost 1.7+2.8g, min 0.5+0.8
-- fast:         1.7+2.4g, boost 1.7+2.8g, min 0.5+1.6
-
 sdm765/sdm765g
-- powersave:    1.8+1.7+2.0g, boost 1.8+2.0+2.2g, min 0.3+0.6+0.8
-- balance:      1.8+2.0+2.2g, boost 1.8+2.2+2.3/2.4g, min 0.5+0.6+0.6
-- performance:  1.8+2.2+2.3g, boost 1.8+2.2+2.3/2.4g, min 0.5+0.6+0.8
-- fast:         1.8+2.0+2.2g, boost 1.8+2.2+2.3/2.4g, min 0.5+1.1+1.4
-
 sdm730/sdm730g
-- powersave:    1.7+1.5g, boost 1.7+1.9g, min 0.3+0.3
-- balance:      1.7+1.9g, boost 1.7+2.1g, min 0.5+0.6
-- performance:  1.8+2.2g, boost 1.8+2.2g, min 0.5+0.6
-- fast:         1.8+1.9g, boost 1.8+2.2g, min 0.5+1.2
-
-sdm675
-- powersave:    1.7+1.5g, boost 1.7+1.7g, min 0.3+0.3
-- balance:      1.7+1.7g, boost 1.7+1.9g, min 0.5+0.6
-- performance:  1.8+2.0g, boost 1.8+2.0g, min 0.5+0.6
-- fast:         1.8+1.7g, boost 1.8+2.0g, min 0.5+1.2
-
 sdm710/sdm712
-- powersave:    1.7+1.8g, boost 1.7+2.0g, min 0.3+0.3
-- balance:      1.7+2.0g, boost 1.7+2.2/2.3g, min 0.5+0.6
-- performance:  1.7+2.2g, boost 1.7+2.2/2.3g, min 0.5+0.6
-- fast:         1.7+2.0g, boost 1.7+2.2/2.3g, min 0.5+1.5
+sdm680 (+ Includes Boost Framework tweaks)
+sdm675
+
+Old Generation
+sdm835
+sdm660
+sdm636
+Kirin 658 (Huawei)
+Kirin 659 (Huawei)
+Kirin 970 (Huawei)
 ```
 
 ## Requirements
 
-1. Android >= 8.0
-2. Rooted
-3. Magisk >= 19.0
-
+1. Android 8-15
+2. Magisk, KSU or Apatch
+3. It may not be compatible with heavily modified/optimized kernels and ROMs. Please be aware of this
+4. Busybox is required to ensure that some optimizations occur more deeply
+ 
 ## Installation
 
-1. Download zip in [Release Page](https://github.com/yc9559/perfd-opt/releases)
-2. Flash in Magisk manager
+1. Download zip in [Release Page](https://github.com/WeirdMidas/SkyPERFAddon/releases)
+2. Flash in your root manager
 3. Reboot
 4. Check whether `/sdcard/Android/panel_powercfg.txt` exists
+
+## FAQ
+
+### Sources
+
+- Loosely based on the King Tweaks and LKT idea, but now more specialized and less error-prone. Because I have a lot of knowledge about EAS and trackers in general due to many projects that I abandoned and did due to limitations.
+- Knowledge of the EAS scheduler and PELT/WALT trackers that I acquired through months of optimization with the old perfd ​​opt and Uperf projects. These were never officially released due to limitations in both and lack of access to the source code.
+
+### 使用解答
+
+No questions
+
+### 技术解答
+
+No response
+
+## About existing features
 
 ## Switch modes
 
@@ -85,6 +93,24 @@ Exec `sh /data/powercfg.sh balance`, where `balance` is the mode you want to swi
 
 Option 2:  
 Install [vtools](https://www.coolapk.com/apk/com.omarea.vtools) and bind APPs to power mode.  
+
+## How to use add-ons
+
+### GameSpace
+
+[still writing...]
+
+### Performance Mode (GameSpace Add-on)
+
+[still writing...]
+
+### Battery Saver Mode
+
+[still writing...]
+
+### Thermal Mode
+
+[still writing...]
 
 ## Credit
 
@@ -106,4 +132,10 @@ provide information about dynamic stune
 
 @rfigo
 provide information about dynamic stune
+
+@yc9559
+the creator of perfd ​​opt and uperf, the GOAT of the 2018-2023 modules
+
+@cover image artist
+I couldn't find the artist, so I'll owe you this one.
 ```
