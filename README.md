@@ -1,5 +1,5 @@
 # XTU Add-on
-![1000003154](https://github.com/user-attachments/assets/461e2985-32ef-400b-a01e-6d6995d9681e)
+![1000003154](https://github.com/user-attachments/assets/a344c48b-1f93-4760-a958-263a3e71f7f0)
 
 "Each new generation of computers demoralizes the previous ones and their creators."
 ## Modern and efficient for the end user experience
@@ -139,3 +139,4 @@ the creator of perfd ​​opt and uperf, the GOAT of the 2018-2023 modules
 @cover image artist
 I couldn't find the artist, so I'll owe you this one.
 ```
+
