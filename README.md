@@ -1,80 +1,53 @@
-# Rebirth of the Phoenix
-![1000003154](https://github.com/user-attachments/assets/a344c48b-1f93-4760-a958-263a3e71f7f0)
+# perfd-opt
 
-"Each new generation of computers demoralizes the previous ones and their creators."
-## Modern and efficient for the end user experience
+## Get the most out of Snapdragon's specialties, be fast and, most importantly, efficient
 
-Older projects like **Uperf**, **Project Wipe**, Matt Yang's **Perfd Opt** and korom42 **LKT** were very good for their time. **Uperf** in particular demonstrated a high degree of evolvability. However, after Matt Yang's disappearance and the disappearance of the **Uperf** code, everything became even more obscure, making **Uperf** a solution that some considered "abandoned." Depending on the device using **Uperf**, it can perform incredibly well or incredibly poorly. And because support has been abandoned, it's difficult to find solutions on the market today that could replace **Uperf's** genius. Even more so, optimizations have become more complicated now, due to the integration of the EAS scheduler, and then trackers like WALT/PELT, which were subsequently integrated years later. This complicated the optimization field and made everything even more complex!
+The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), automatically adjust the `interactive` parameters via simulation and heuristic optimization algorithms, and working on all mainstream devices which use `interactive` as default governor. The recent [WIPE v2](https://github.com/yc9559/wipe-v2), improved simulation supports more features of the kernel and focuses on rendering performance requirements, automatically adjusting the `interactive`+`HMP`+`input boost` parameters. However, after the EAS is merged into the mainline, the simulation difficulty of auto-tuning depends on raise. It is difficult to simulate the logic of the EAS scheduler. In addition, EAS is designed to avoid parameterization at the beginning of design, so for example, the adjustment of schedutil has no obvious effect. In addition, other parameters were added, such as schedtune, uclamp, and even some assistance. This number of parameters made everything more complex, but it opened up a lot of room for improvements in more specific areas of the UI or CPU/GPU. In return, the potential for error and reduced performance or even energy efficiency, creating a trade-off or scheduling deficiency.
 
-Based on this, the LKT (Fork) is a **EAS & HMP Scheduler**, **CPU Governor** and **GPU** optimization tool that aims to achieve two things: unify the scheduler and tracker so they work together, and aims to achieve a fair **balance** between **power consumption** and **performance**. However, rather than adjusting purely based on intuition and guesswork, it's done through knowledge of how the basic EAS scheduler (found on poorly optimized devices), moderately optimized, and highly optimized devices works. This approach allows us to take into account the performance and efficiency needs of each SOC, allowing us to simulate EAS behavior on each SOC, allowing us to improve each one's behavior while respecting its immediate performance needs. For devices with HMP, optimizations are based on Project WIPE, which simulates EAS behavior by taking into account power consumption and rendering performance needs to avoid frame drops. It integrates strategies such as **rice-to-idle**, optimal use of **small cores**, as well as additions such as **GameSpace**, **Performance Mode**, **Thermal Mode**, and **Battery Saver Mode** and other functions In addition to the classic power profiles, it also adds optimizations that depend on various subsystems, such as refresh rate and others. This allows the device to extract its maximum potential, regardless of the situation, meaning the module will always strive to run on the most efficient OPP possible. Remember: The focus is to run the task with the lowest OPP and as quickly as possible.
+[WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further. Now, speaking about `Perfd-opt`, we will be modifying the Boost Framework on the user's device, which must be disabled before applying optimization, is able to dynamically override parameters based on perf hint. The project utilizes the `Boost Framework` found on the device and extends the ability of override custom parameters. When there is user interaction, such as opening an app or touching/scrolling the screen, use aggressive parameters with an acceptable energy cost and within the expectations of each power mode. When the interaction ends, return to idle as quickly as possible. Follow this strategy called "Rice-to-idle". Also, include preliminary optimizations such as: use bw_hwmon for LLC and DDR, and unlock the maximum available GPU and Devfreq frequency, where the GPU's power will be limited according to the power mode that selects a maximum power level that is ideal for the specific mode, Improvements to the WALT tracker for the purpose of improving EAS scheduling, allowing SOCs that have the full WALT solution to greatly benefit from this, with improvements in latency, sustainability and energy efficiency, Using the boost mechanisms of the HMP and EAS schedulers respectively, depending on the selected profile, a greater or lesser boost is imposed on the tasks the user is currently interacting with. This also involves the GPU, which scales aggressively according to the selected power mode, potentially allowing marginal gains of +fps in games as well as better stability in high-performance profiles, automatic selection of the best TCP algorithm based on compatibility. However, even with this set of adjustments, we will try run at a higher energy efficiency OPP under heavy load.
 
-Details see [the lead project](https://github.com/WeirdMidas/LKT/commits/master/) & [LKT commits](https://github.com/WeirdMidas/LKT/commits/master/)    
+Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
-## Features
-- Includes specific improvements and optimizations for the device's scheduling, CPU, and GPU. Respecting the capabilities, limitations, and specialties of each SOC and its architecture, this in turn allows for the best possible performance from the SOC itself, both in terms of energy efficiency and raw performance.
-- Introduce the "Rice-to-idle" strategy, a form of tracker optimization that allows the CPU to immediately jump to a frequency that finishes the task quickly and then rest immediately, saving as much power as possible while using a linear frequency curve.
-  - Follow a "linear" frequency scale, giving each SOC its own "sweetspot" frequency, where power consumption per watt, cost, and performance are close to ideal for light to moderate tasks. Following this linear scaling, allow BIG cores to wake up quickly by using the "sweetspot" frequency as the wakeup frequency, minimizing conflicting latencies as much as possible. This is the essence of "rice-to-idle"!
-- Use core_ctl as the primary hotplug. If the user has TEO, use TEO instead. Using core_ctl as the primary hotplug is because optimizations are applied to core_ctl that improve the scheduler's efficiency in selecting and deactivating cores, always meeting diverse demands according to core needs.
-- Don't mess with the SOC's Boost Framework! Focus your efforts on just sysfs parameters and system props, reducing the need to adjust the device's dynamic boosting. This is a form of compatibility that Perfd opt typically lacked.
-- SELinux can still be enabled
+## Profiles
 
-## Compatibility
-
-- powersave: based on balance mode, but with lower max frequency. Ideal for saving as much energy as possible with low impact on fluidity
-- balance: smoother than the stock config with lower power consumption. There is no maximum frequency limitation, allowing the device to scale freely between performance demands
-- performance: based on balance, but with added boosts and more aggressiveness in rice to allow better performance per watt (cost~pwr)
-- fast: purely maximum performance, ideal for benchmarks and other extremely demanding tasks. This is achieved by maximizing performance based on the device's base TDP
+- powersave: based on balance mode, but with more minimized energy consumption, users may report lower UX performance. It aims to increase the device's base SOT by 2.5 hours
+- balance: smoother than the stock config with lower power consumption. Focuses on hitting the "sweet spot" between performance and power consumption. It aims to increase the device's base SOT by 1.5 hours
+- performance: no frequency limiting and use of more aggressive boosts based on the frequency "sweetspot" of the most powerful clusters. It aims to deliver better performance with the device lasting AT MOST one hour less
+- fast: providing stable performance capacity considering the TDP limitation of device chassis. Made purely for benchmarks or tasks that the user cannot perform without fully demanding the CPU or GPU. The battery may last longer or shorter, depending on the ambient temperature and the load exerted
 
 ```plain
-EAS + Schedutil
 sdm865
 sdm855/sdm855+
 sdm845
+sdm835
+
 sdm765/sdm765g
 sdm730/sdm730g
 sdm710/sdm712
+
 sdm680
 sdm675
-
-HMP + Interactive
-sdm835
 sdm660
+sdm652
+sdm650
 sdm636
-Kirin 658 (Huawei)
-Kirin 659 (Huawei)
-Kirin 970 (Huawei)
+
+sdm450
+sdm430
 ```
 
 ## Requirements
 
-1. Android 8-15
-2. Magisk, KSU or Apatch
-3. It may not be compatible with heavily modified/optimized kernels and ROMs. Please be aware of this
-4. Busybox is required to ensure that some optimizations occur more deeply
- 
+1. Android 8+
+2. Magisk, KSU or Apatch, the most up-to-date version possible if you can
+3. It is exclusive to Snapdragon processors! It will not be compatible with other SOCs (until further notice)
+
 ## Installation
 
-1. Download zip in [Release Page](https://github.com/WeirdMidas/SkyPERFAddon/releases)
-2. Flash in your root manager
+1. Download zip in [Release Page](https://github.com/yc9559/perfd-opt/releases)
+2. Flash in your actual Root Manager
 3. Reboot
 4. Check whether `/sdcard/Android/panel_powercfg.txt` exists
-
-## FAQ
-
-### Sources
-
-- Loosely based on the King Tweaks, Perfd Opt and LKT idea, but now more specialized and less error-prone. Because I have a lot of knowledge about EAS and trackers in general due to many projects that I abandoned and did due to limitations.
-- Knowledge of the EAS scheduler and PELT/WALT trackers that I acquired through months of optimization with the old perfd ​​opt and Uperf projects. These were never officially released due to limitations in both and lack of access to the source code.
-
-### 使用解答
-
-No questions
-
-### 技术解答
-
-No response
-
-## About existing features
 
 ## Switch modes
 
@@ -91,24 +64,6 @@ Exec `sh /data/powercfg.sh balance`, where `balance` is the mode you want to swi
 
 Option 2:  
 Install [vtools](https://www.coolapk.com/apk/com.omarea.vtools) and bind APPs to power mode.  
-
-## How to use add-ons
-
-### GameSpace
-
-[still writing...]
-
-### Performance Mode (GameSpace Add-on)
-
-[still writing...]
-
-### Battery Saver Mode
-
-[still writing...]
-
-### Thermal Mode
-
-[still writing...]
 
 ## Credit
 
@@ -130,18 +85,4 @@ provide information about dynamic stune
 
 @rfigo
 provide information about dynamic stune
-
-@yc9559
-the creator of perfd ​​opt and uperf, the GOAT of the 2018-2023 modules. He had disappeared for some reason, with his last project being a dynamic refresh rate change, I wonder what happened to him
-
-@korom42
-From the old, original LKT project, which was discriminated against by Tytydraco, Tytydraco didn't see that the prop optimizations were additional, so much so that most of them weren't even used. The real optimizations came from the Wipe project and various community contributions. This accusation from Tytydraco even caused LKT to drastically change and become a horrible copy of the old Uperf
-
-@Pedrozzz0
-King Tweaks was a good project at the time, however, due to the level of complexity, it ended up being incompatible with the current Android, making it stuck with the old Android from Android 12 onwards
-
-@cover image artist
-I couldn't find the artist, so I'll owe you this one
 ```
-
-
