@@ -65,13 +65,16 @@ sdm430 (HMP+Interactive+Project WIPE)
   - Less energy waste at intermediate frequencies, delivering the necessary power for each specific task.
   - Avoid using frequencies higher than necessary; be mindful and allow each demand to be met according to its need and "hunger."
 - **CAF CPU Boost Framework**: The module also uses Qualcomm's boost framework for each compatible SOC IF I have the time and patience. The optimizations and improvements resulting from optimizing the boost framework are: reduction of micro-jitter and latency variation in "common" UX demands, such as scrolling for example. And to improve the ability of the LITTLE Cluster to handle demands efficiently and within the demand limit they can handle, reduce the energy consumption of the big/prime cluster, allowing the LITTLE cluster to handle light to medium demands as much as possible, where the Big cluster should only be used for heavy loads and to receive tasks that the LITTLE cluster cannot handle.
-
+  - Modify the more complex hints into something the EAS can understand better. Improve the behavior of several hints in the QTI Boost Framework so that it serves as an additional algorithm for the EAS that it can trust to be "energy-conscious," allowing the EAS's decisions to be more battery-friendly and user-friendly.
+  
 ## Requirements
 
 1. Android 8 or higher
 2. Magisk, KSU or Apatch, the most up-to-date version possible if you can
 3. It is exclusive to Snapdragon processors! It will not be compatible with other SOCs (until further notice)
 4. Currently, it is only compatible with EAS & HMP. Other custom schedulers like CASS, etc., may not be as compatible
+5. Prefers the QTI Boost Framework from Qualcomm; other boost frameworks like powerhint/libperfmgr may not be compatible in the future. Users can still make do with sysfs adjustments if they are not compatible, but they will not have the dynamic boosts of QTI
+6. Prefers stock kernels; extremely modified kernels that even modify the frequency table may not work very well with the module
 
 ## Installation
 
