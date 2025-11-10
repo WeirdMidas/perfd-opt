@@ -17,13 +17,13 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 
 ```plain
 sdm865 (EAS+Schedutil)
-- powersave:    1.8+1.6+2.4g, min 0.3+0.7+1.1
+- powersave:    1.8+1.6+2.4g, min 0.7+0.7+1.1
 - balance:      1.8+2.0+2.6g, min 0.7+0.7+1.1
 - performance:  1.8+2.4+2.8g, min 0.7+0.7+1.1
 - fast:         1.8+2.0+2.7g, min 0.7+1.2+1.2
 
 sdm855/sdm855+ (EAS+Schedutil)
-- powersave:    1.7+1.6+2.4g, min 0.3+0.7+0.8
+- powersave:    1.7+1.6+2.4g, min 0.5+0.7+0.8
 - balance:      1.7+2.0+2.6g, min 0.5+0.7+0.8
 - performance:  1.7+2.4+2.8g, min 0.5+0.7+0.8
 - fast:         1.7+2.0+2.7g, min 0.5+1.2+1.2
@@ -35,7 +35,7 @@ sdm845 (EAS+Schedutil)
 - fast:         max 1.7+2.4g, min 0.5+1.6
 
 sdm765/sdm765g (EAS+Schedutil)
-- powersave:    1.8+1.7+2.0g, min 0.3+0.6+0.8
+- powersave:    1.8+1.7+2.0g, min 0.5+0.6+0.8
 - balance:      1.8+2.0+2.2g, min 0.5+0.6+0.6
 - performance:  1.8+2.2+2.3g, min 0.5+0.6+0.8
 - fast:         1.8+2.0+2.2g, min 0.5+1.1+1.4
