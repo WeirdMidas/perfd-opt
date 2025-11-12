@@ -81,10 +81,12 @@ sdm430 (HMP+Interactive+Project WIPE)
   - Minimum and maximum frequency control according to power modes. Specifically controls the frequency of the big/prime cores, leaving the LITTLE cores untouched.
   - Use the big/prime cluster only for sustained and/or heavy tasks. Avoid using the big/prime cluster for demands below that level; use the LITTLE cluster to handle those tasks efficiently.
   - Follow the EAS ideology to the extreme and push it a step further, far beyond what OEMs normally follow: use less of the Big Cluster unnecessarily, migrate tasks to the LITTLE cluster if the Big Cluster has already met the demand and no longer needs them there without long waits but without generating thrashing, meet the demand immediately without waiting and meet the user experience needs at the moment, and above all: be energy efficient and CONSCIOUS! Reduce the imprecision of the EAS and allow it to use its EM (Energy Model) with maximum precision by having the scheduling parameters calibrated and optimized for what the EAS likes and can work freely.
+  - Use Matt Yang's test, in which binder tasks take 7ms to complete on the little core and 3ms on the big core, as a basis for possible tuning involving migration. Migrate tasks to the big cluster ONLY if the net gain is 2.88ms, keeping ultra-short tasks (7ms) on the LITTLE cores, since they can solve more efficiently without exorbitant energy costs.
+  - For DynamlQ systems, ignore the cost of migration or inertia. Allow DynamlQ to use the MAXIMUM of its L3 cache and have no limitations on migration, due to having fewer limitations in this area. Allowing DynamlQ and Big.LITTLE devices to have their preferences and differences in migration cost.
 - **HMP+Interactive+Project WIPE**: The device has HMP, therefore its optimizations focus on aligning the HMP's behavior with the EAS. Allowing the HMP to be "energy conscious" similar to the EAS. Exclusive features of HMP+Interactive+ProjectWipe:
   - Less energy waste at intermediate frequencies, delivering the necessary power for each specific task.
   - Avoid using frequencies higher than necessary; be mindful and allow each demand to be met according to its need and "hunger."
-  - Allow the HMP to be as fluid as possible, with minimal energy costs.
+  - So migrate tasks to the big cluster if the cost-benefit ratio is above 4.08ms when using Matt Yang's basic math, due to the difference between big cores and EAS, where HMP big cores are +0.7x more powerful than traditional EAS big cores, because EAS underestimates the capacity of big cores in favor of energy efficiency.
 - **CAF CPU Boost Framework**: The module also uses Qualcomm's boost framework for each compatible SOC IF I have the time and patience. The optimizations and improvements resulting from optimizing the boost framework are: reduction of micro-jitter and latency variation in "common" UX demands, such as scrolling for example. And to improve the ability of the LITTLE Cluster to handle demands efficiently and within the demand limit they can handle, reduce the energy consumption of the big/prime cluster, allowing the LITTLE cluster to handle light to medium demands as much as possible, where the Big cluster should only be used for heavy loads and to receive tasks that the LITTLE cluster cannot handle.
   - Modify the hints to something that the EAS understands better. Provide only the MINIMUM so that the EAS can decide to work with maximum precision, reducing deficiencies and improving CPU, I/O, and GPU scheduling in various areas of the system, allowing the QTI Boost Framework to follow the EAS ideal of "costing the least possible energy for a fluid UX".
   - Let the LITTLE cluster handle all light and medium demands, within their expected consumption. Do this as efficiently as possible and without negatively impacting the UX, allowing the LITTLE cluster to be useful in these situations and not disrupt the overall system schedule. This allows the EAS to become more aware.
@@ -104,6 +106,14 @@ sdm430 (HMP+Interactive+Project WIPE)
 2. Flash in your actual Root Manager
 3. Reboot
 4. Check whether `/sdcard/Android/panel_powercfg.txt` exists
+
+## FAQ
+
+### Sources
+
+- Studies on how Google modifies and uses EAS, from basic to advanced.
+- Matt Yang's tests on the cost-benefit of migration. Using the binder as a test (seen in Uperf's old project before V3).
+- Explanations from engineers about certain aspects of EAS, mainly its ideology and the ways it decides to be more energy-conscious.
 
 ## Switch modes
 
