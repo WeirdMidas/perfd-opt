@@ -1,10 +1,14 @@
 # perfd-opt
 
-## Get the most out of Snapdragon's specialties, be fast and, most importantly, efficient and conscious
+## Get the most out of Snapdragon — fast, efficient, and balanced
 
-The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), automatically adjust the `interactive` parameters via simulation and heuristic optimization algorithms, and working on all mainstream devices which use `interactive` as default governor. The recent [WIPE v2](https://github.com/yc9559/wipe-v2), improved simulation supports more features of the kernel and focuses on rendering performance requirements, automatically adjusting the `interactive`+`HMP`+`input boost` parameters. However, after the EAS is merged into the mainline, the simulation difficulty of auto-tuning depends on raise. It is difficult to simulate the logic of the EAS scheduler, furthermore, some SoCs have an inefficient frequency curve, as demonstrated by some in the 800 series, which are reported to overheat even during simple tasks. This shows that some Qualcomm SoCs are extremely inefficient, even with capabilities far superior to processors from even current generations. In addition, EAS is designed to avoid parameterization at the beginning of design, so for example, the adjustment of schedutil has no obvious effect. In addition, more parameters are added in each generation, which causes everything more complex, but it opened up a lot of room for improvements in more specific areas. In return, the potential for error and reduced performance or even energy efficiency, creating a trade-off or scheduling deficiency. Furthermore, nowadays, most users don't look for optimization modules for a single purpose like playing games, etc., but rather optimizers that can be used for various purposes. Even users today would like to take better photos, although this is a minority. This means that finding a module with multiple performance modes and a focus on UX is proving difficult on the market, since creating a module that does this is challenging and complex, especially for beginner developers.
+perfd-opt is a module designed to improve the user experience and energy efficiency of Snapdragon devices, both on modern SoCs using EAS + schedutil and older ones using HMP + interactive.
 
-[WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further. Now, speaking about `perfd-opt`, he aims to achieve a fair **balance** between **power consumption** and **performance** in both modern (EAS) and older (HMP) generation Snapdragon devices. One of the optimization methods is through modifying the Boost Framework on the user's device, which must be disabled before applying optimization, is able to dynamically override parameters based on perf hint. The project utilizes the `Boost Framework` found on the device and extends the ability of override custom parameters. Currently, perfd-opt is only compatible with QTI Boost Framework, but don't worry: it's checked before being applied. In other words, Boost Framework configurations only occur if the device is compatible; otherwise, it focuses on sysfs optimizations. With boost framework + sysfs optimizations (or just sysfs): When there is user interaction, such as opening an app or touching/scrolling the screen, use aggressive parameters with an acceptable energy cost and within the expectations of each power mode. When the interaction ends, return to idle as quickly as possible. Follow this strategy called "Rice-to-idle". But instead of focusing on being as quick as possible between finishing a task and entering idle mode, it focuses on using the most efficient OPP possible, striking an optimal balance between performance and energy consumption for the current demand, whether light, medium, or heavy, avoiding unnecessary resource waste: For SOCs with inefficient frequency curves, micro-optimization is applied: reduction in maximum and minimum frequencies according to the selected profile, allowing a reduction in the inefficiency of these SOCs by selecting a more efficient minimum and maximum frequency ceiling for them, enabling an increase of up to +40% in energy efficiency. As a famous saying that the module follows: with more efficiency, less waste you will have for the same level of performance you traditionally have.
+Unlike projects such as WIPE, which rely on simulation of the interactive governor, perfd-opt applies direct adjustments to Qualcomm’s QTI Boost Framework (when available) and complementary sysfs optimizations. This enables more aggressive behavior during user interactions (touch, scrolling, app launches) and a fast return to efficient OPPs (Operating Performance Points) once activity ends—an efficient race-to-idle strategy that prioritizes the most economical operating point for the current workload.
+
+For Snapdragon models with inefficient power–frequency curves (common in certain 8xx series SoCs), the module also introduces optimized DVFS limits, refining minimum and maximum frequencies to reduce waste and improve efficiency by up to ~40% in specific workloads without sacrificing responsiveness.
+
+The goal is simple: deliver the best balance between performance, responsiveness, and power consumption, with configurable profiles that adapt to everything from light usage to heavy workloads.
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
@@ -13,18 +17,17 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - powersave: based on balance mode, but with more minimized energy consumption, users may report lower UX performance. The proposal aims to reduce energy consumption by half
 - balance: smoother than the stock config with lower power consumption. Focuses on hitting the "sweet spot" between performance and power consumption. The proposal aims to reduce stock energy consumption by up to 35%
 - performance: no frequency limiting and use of more aggressive boosts based on the frequency "sweetspot" of the most powerful clusters. It aims to deliver better performance with the device lasting AT MOST one hour less
-- fast: providing stable performance capacity considering the TDP limitation of device chassis. Made purely for benchmarks or tasks that the user cannot perform without fully demanding the CPU or GPU. The battery may last longer or shorter, depending on the ambient temperature and the load exerted
+- fast: delivers stable performance within the device's TDP limits. Made purely for benchmarks or tasks that the user cannot perform without fully demanding the CPU or GPU. The battery may last longer or shorter, depending on the ambient temperature and the load exerted
 
 ```plain
-
-Typos Meanings:
+Terms Meaning:
 **EAS+Schedutil**: The processor is "modern" and traditionally uses EAS.
 **HMP+Interactive**: The processor is "old" and traditionally uses HMP. There may be variations with EAS, but they will not count, as they are more specific to custom kernel/specific phones.
 **Project WIPE**: Official support for Project Wipe has been implemented for the SOC if it is HMP+Interactive.
 **Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
 **Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
 
-List of compatible SOCs
+Supported SoCs:
 sdm865 (EAS+Schedutil+Optimized DVFS curve)
 sdm855/sdm855+ (EAS+Schedutil+Optimized DVFS curve)
 sdm845 (EAS+Schedutil+Optimized DVFS curve)
@@ -54,11 +57,11 @@ sdm430 (HMP+Interactive+Project WIPE)
 ## Installation
 
 1. Download zip in [Release Page](https://github.com/yc9559/perfd-opt/releases)
-2. Flash in your actual Root Manager
+2. Flash it using your root solution (Magisk, KSU, or Apatch)
 3. Reboot
 4. Check whether `/sdcard/Android/panel_powercfg.txt` exists
 
-## FAQ
+## References
 
 ### Sources
 
@@ -106,3 +109,4 @@ provide information about dynamic stune
 @Matt Yang
 Based on the original module and also ideas from Uperf
 ```
+ 
