@@ -2,94 +2,45 @@
 
 ## Get the most out of Snapdragon's specialties, be fast and, most importantly, efficient and conscious
 
-The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), automatically adjust the `interactive` parameters via simulation and heuristic optimization algorithms, and working on all mainstream devices which use `interactive` as default governor. The recent [WIPE v2](https://github.com/yc9559/wipe-v2), improved simulation supports more features of the kernel and focuses on rendering performance requirements, automatically adjusting the `interactive`+`HMP`+`input boost` parameters. However, after the EAS is merged into the mainline, the simulation difficulty of auto-tuning depends on raise. It is difficult to simulate the logic of the EAS scheduler. In addition, EAS is designed to avoid parameterization at the beginning of design, so for example, the adjustment of schedutil has no obvious effect. In addition, other parameters were added, such as schedtune, uclamp, and even some assistance. This number of parameters made everything more complex, but it opened up a lot of room for improvements in more specific areas of the UI or CPU/GPU. In return, the potential for error and reduced performance or even energy efficiency, creating a trade-off or scheduling deficiency. Furthermore, nowadays, most users don't look for optimization modules for a single purpose like playing games, etc., but rather optimizers that can be used for various purposes. Even users today would like to take better photos, although this is a minority. This means that finding a module with multiple performance modes and a focus on UX is proving difficult on the market, since creating a module that does this is challenging and complex, especially for beginner developers.
+The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), automatically adjust the `interactive` parameters via simulation and heuristic optimization algorithms, and working on all mainstream devices which use `interactive` as default governor. The recent [WIPE v2](https://github.com/yc9559/wipe-v2), improved simulation supports more features of the kernel and focuses on rendering performance requirements, automatically adjusting the `interactive`+`HMP`+`input boost` parameters. However, after the EAS is merged into the mainline, the simulation difficulty of auto-tuning depends on raise. It is difficult to simulate the logic of the EAS scheduler, furthermore, some SoCs have an inefficient frequency curve, as demonstrated by some in the 800 series, which are reported to overheat even during simple tasks. This shows that some Qualcomm SoCs are extremely inefficient, even with capabilities far superior to processors from even current generations. In addition, EAS is designed to avoid parameterization at the beginning of design, so for example, the adjustment of schedutil has no obvious effect. In addition, more parameters are added in each generation, which causes everything more complex, but it opened up a lot of room for improvements in more specific areas. In return, the potential for error and reduced performance or even energy efficiency, creating a trade-off or scheduling deficiency. Furthermore, nowadays, most users don't look for optimization modules for a single purpose like playing games, etc., but rather optimizers that can be used for various purposes. Even users today would like to take better photos, although this is a minority. This means that finding a module with multiple performance modes and a focus on UX is proving difficult on the market, since creating a module that does this is challenging and complex, especially for beginner developers.
 
-[WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further. Now, speaking about `Perfd-opt`, we will be modifying the Boost Framework on the user's device, which must be disabled before applying optimization, is able to dynamically override parameters based on perf hint. The project utilizes the `Boost Framework` found on the device and extends the ability of override custom parameters. Currently, perfd-opt is only compatible with QTI Boost Framework, but don't worry: it's checked before being applied. In other words, Boost Framework configurations only occur if the device is compatible; otherwise, it focuses on sysfs optimizations. With boost framework + sysfs optimizations (or just sysfs): When there is user interaction, such as opening an app or touching/scrolling the screen, use aggressive parameters with an acceptable energy cost and within the expectations of each power mode. When the interaction ends, return to idle as quickly as possible. Follow this strategy called "Rice-to-idle". But instead of focusing on being as quick as possible between finishing a task and entering idle mode, it focuses on using the most efficient OPP possible, striking an optimal balance between performance and energy consumption for the current demand, whether light, medium, or heavy, avoiding unnecessary resource waste. As a famous saying that the module follows: with more efficiency, less waste you will have for the same level of performance you traditionally have.
-
-With the module in question, which optimizes for user experience (combining performance and battery life), users can utilize their higher refresh rates, such as 90Hz or 120Hz phones, etc., because the module also benefits from automated display refresh rate adjustment, always favoring savings when the user stops interacting. These are basic things that, in turn, allow the user to get the most out of their device in various ways, without worrying about the remaining SOT (Screen On Time). Furthermore, the module optimizes some scheduling parameters based on the maximum refresh rate that the processor achieves, meaning that users need to use the maximum refresh rate IF they want maximum efficiency and performance to get the full benefits. If they want even more efficiency, users are still allowed to lower the refresh rate to the minimum or lowest possible rate.
+[WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further. Now, speaking about `perfd-opt`, he aims to achieve a fair **balance** between **power consumption** and **performance** in both modern (EAS) and older (HMP) generation Snapdragon devices. One of the optimization methods is through modifying the Boost Framework on the user's device, which must be disabled before applying optimization, is able to dynamically override parameters based on perf hint. The project utilizes the `Boost Framework` found on the device and extends the ability of override custom parameters. Currently, perfd-opt is only compatible with QTI Boost Framework, but don't worry: it's checked before being applied. In other words, Boost Framework configurations only occur if the device is compatible; otherwise, it focuses on sysfs optimizations. With boost framework + sysfs optimizations (or just sysfs): When there is user interaction, such as opening an app or touching/scrolling the screen, use aggressive parameters with an acceptable energy cost and within the expectations of each power mode. When the interaction ends, return to idle as quickly as possible. Follow this strategy called "Rice-to-idle". But instead of focusing on being as quick as possible between finishing a task and entering idle mode, it focuses on using the most efficient OPP possible, striking an optimal balance between performance and energy consumption for the current demand, whether light, medium, or heavy, avoiding unnecessary resource waste: For SOCs with inefficient frequency curves, micro-optimization is applied: reduction in maximum and minimum frequencies according to the selected profile, allowing a reduction in the inefficiency of these SOCs by selecting a more efficient minimum and maximum frequency ceiling for them, enabling an increase of up to +40% in energy efficiency. As a famous saying that the module follows: with more efficiency, less waste you will have for the same level of performance you traditionally have.
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
 ## Profiles
 
-- powersave: based on balance mode, but with more minimized energy consumption, users may report lower UX performance. It aims to increase the device's base SOT by 2.5 hours
-- balance: smoother than the stock config with lower power consumption. Focuses on hitting the "sweet spot" between performance and power consumption. It aims to increase the device's base SOT by 1.5 hours
+- powersave: based on balance mode, but with more minimized energy consumption, users may report lower UX performance. The proposal aims to reduce energy consumption by half
+- balance: smoother than the stock config with lower power consumption. Focuses on hitting the "sweet spot" between performance and power consumption. The proposal aims to reduce stock energy consumption by up to 35%
 - performance: no frequency limiting and use of more aggressive boosts based on the frequency "sweetspot" of the most powerful clusters. It aims to deliver better performance with the device lasting AT MOST one hour less
 - fast: providing stable performance capacity considering the TDP limitation of device chassis. Made purely for benchmarks or tasks that the user cannot perform without fully demanding the CPU or GPU. The battery may last longer or shorter, depending on the ambient temperature and the load exerted
 
 ```plain
-sdm865 (EAS+Schedutil)
-- powersave:    1.8+1.6+2.4g, min 0.7+0.7+1.1
-- balance:      1.8+2.0+2.6g, min 0.7+0.7+1.1
-- performance:  1.8+2.4+2.8g, min 0.7+0.7+1.1
-- fast:         1.8+2.0+2.7g, min 0.7+1.2+1.2
 
-sdm855/sdm855+ (EAS+Schedutil)
-- powersave:    1.7+1.6+2.4g, min 0.5+0.7+0.8
-- balance:      1.7+2.0+2.6g, min 0.5+0.7+0.8
-- performance:  1.7+2.4+2.8g, min 0.5+0.7+0.8
-- fast:         1.7+2.0+2.7g, min 0.5+1.2+1.2
+Typos Meanings:
+**EAS+Schedutil**: The processor is "modern" and traditionally uses EAS.
+**HMP+Interactive**: The processor is "old" and traditionally uses HMP. There may be variations with EAS, but they will not count, as they are more specific to custom kernel/specific phones.
+**Project WIPE**: Official support for Project Wipe has been implemented for the SOC if it is HMP+Interactive.
+**Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
+**Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
 
-sdm845 (EAS+Schedutil)
-- powersave:    max 1.7+2.0g, min 0.5+0.8
-- balance:      max 1.7+2.4g, min 0.5+0.8
-- performance:  max 1.7+2.8g, min 0.5+0.8
-- fast:         max 1.7+2.4g, min 0.5+1.6
-
+List of compatible SOCs
+sdm865 (EAS+Schedutil+Optimized DVFS curve)
+sdm855/sdm855+ (EAS+Schedutil+Optimized DVFS curve)
+sdm845 (EAS+Schedutil+Optimized DVFS curve)
 sdm765/sdm765g (EAS+Schedutil)
-- powersave:    1.8+1.7+2.0g, min 0.5+0.6+0.8
-- balance:      1.8+2.0+2.2g, min 0.5+0.6+0.6
-- performance:  1.8+2.2+2.3g, min 0.5+0.6+0.8
-- fast:         1.8+2.0+2.2g, min 0.5+1.1+1.4
-
 sdm730/sdm730g (EAS+Schedutil)
-- powersave:    max 1.8+1.5g, min 0.5+0.6
-- balance:      max 1.8+1.9g, min 0.5+0.6
-- performance:  max 1.8+2.0g, min 0.5+0.6
-- fast:         max 1.8+1.9g, min 0.5+1.2
-
 sdm710/sdm712 (EAS+Schedutil)
-- powersave:    max 1.7+1.8g, min 0.5+0.6
-- balance:      max 1.7+2.0g, min 0.5+0.6
-- performance:  max 1.7+2.2g  min 0.5+0.6
-- fast:         max 1.7+2.0g, min 0.5+1.5
-
-sdm680 (EAS+Schedutil+CAF CPU Boost Framework)
-- powersave:    max 1.9+2.2g, min 0.6+0.8
-- balance:      max 1.9+2.2g, min 0.6+0.8
-- performance:  max 1.9+2.4g, min 0.6+0.8
-- fast:         max 1.9+2.2g, min 0.6+1.3
-
+sdm680 (EAS+Schedutil+Optimized Boost Framework)
 sdm675 (EAS+Schedutil)
-- powersave:    max 1.8+1.5g, min 0.5+0.6
-- balance:      max 1.8+1.7g, min 0.5+0.6
-- performance:  max 1.8+2.0g, min 0.5+0.6
-- fast:         max 1.8+1.7g, min 0.5+1.2
-
 sdm835 (HMP+Interactive+Project WIPE)
-
 sdm660 (HMP+Interactive+Project WIPE)
 sdm652 (HMP+Interactive+Project WIPE)
 sdm650 (HMP+Interactive+Project WIPE)
 sdm636 (HMP+Interactive+Project WIPE)
-
 sdm450 (HMP+Interactive+Project WIPE)
 sdm430 (HMP+Interactive+Project WIPE)
 ```
-
-- **EAS+Schedutil**: The device traditionally has EAS, therefore its optimizations focus primarily on energy efficiency. Exclusive features of EAS+Schedutil:
-  - Minimum and maximum frequency control according to power modes. Specifically controls the frequency of the big/prime cores, leaving the LITTLE cores untouched.
-  - Use the big/prime cluster only for sustained and/or heavy tasks. Avoid using the big/prime cluster for demands below that level; use the LITTLE cluster to handle those tasks efficiently.
-  - Follow the EAS ideology to the extreme and push it a step further, far beyond what OEMs normally follow: use less of the Big Cluster unnecessarily, migrate tasks to the LITTLE cluster if the Big Cluster has already met the demand and no longer needs them there without long waits but without generating thrashing, meet the demand immediately without waiting and meet the user experience needs at the moment, and above all: be energy efficient and CONSCIOUS! Reduce the imprecision of the EAS and allow it to use its EM (Energy Model) with maximum precision by having the scheduling parameters calibrated and optimized for what the EAS likes and can work freely.
-  - Use Matt Yang's test, in which binder tasks take 7ms to complete on the little core and 3ms on the big core, as a basis for possible tuning involving migration. Migrate tasks to the big cluster ONLY if the net gain is 2.88ms, keeping ultra-short tasks (7ms) on the LITTLE cores, since they can solve more efficiently without exorbitant energy costs.
-  - For DynamlQ systems, ignore the cost of migration or inertia. Allow DynamlQ to use the MAXIMUM of its L3 cache and have no limitations on migration, due to having fewer limitations in this area. Allowing DynamlQ and Big.LITTLE devices to have their preferences and differences in migration cost.
-- **HMP+Interactive+Project WIPE**: The device has HMP, therefore its optimizations focus on aligning the HMP's behavior with the EAS. Allowing the HMP to be "energy conscious" similar to the EAS. Exclusive features of HMP+Interactive+ProjectWipe:
-  - Less energy waste at intermediate frequencies, delivering the necessary power for each specific task.
-  - Avoid using frequencies higher than necessary; be mindful and allow each demand to be met according to its need and "hunger."
-  - So migrate tasks to the big cluster if the cost-benefit ratio is above 4.08ms when using Matt Yang's basic math, due to the difference between big cores and EAS, where HMP big cores are +0.7x more powerful than traditional EAS big cores, because EAS underestimates the capacity of big cores in favor of energy efficiency.
-- **CAF CPU Boost Framework**: The module also uses Qualcomm's boost framework for each compatible SOC IF I have the time and patience. The optimizations and improvements resulting from optimizing the boost framework are: reduction of micro-jitter and latency variation in "common" UX demands, such as scrolling for example. And to improve the ability of the LITTLE Cluster to handle demands efficiently and within the demand limit they can handle, reduce the energy consumption of the big/prime cluster, allowing the LITTLE cluster to handle light to medium demands as much as possible, where the Big cluster should only be used for heavy loads and to receive tasks that the LITTLE cluster cannot handle.
-  - Modify the hints to something that the EAS understands better. Provide only the MINIMUM so that the EAS can decide to work with maximum precision, reducing deficiencies and improving CPU, I/O, and GPU scheduling in various areas of the system, allowing the QTI Boost Framework to follow the EAS ideal of "costing the least possible energy for a fluid UX".
-  - Let the LITTLE cluster handle all light and medium demands, within their expected consumption. Do this as efficiently as possible and without negatively impacting the UX, allowing the LITTLE cluster to be useful in these situations and not disrupt the overall system schedule. This allows the EAS to become more aware.
 
 ## Requirements
 
@@ -151,4 +102,7 @@ provide information about dynamic stune
 
 @rfigo
 provide information about dynamic stune
+
+@Matt Yang
+Based on the original module and also ideas from Uperf
 ```
