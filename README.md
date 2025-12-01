@@ -26,6 +26,7 @@ Terms Meaning:
 **Project WIPE**: Official support for Project Wipe has been implemented for the SOC if it is HMP+Interactive.
 **Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
 **Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
+**Optimized Thermals**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
 
 Supported SoCs:
 sdm865 (EAS+Schedutil+Optimized DVFS curve)
@@ -34,7 +35,7 @@ sdm845 (EAS+Schedutil+Optimized DVFS curve)
 sdm765/sdm765g (EAS+Schedutil)
 sdm730/sdm730g (EAS+Schedutil)
 sdm710/sdm712 (EAS+Schedutil)
-sdm680 (EAS+Schedutil+Optimized Boost Framework)
+sdm680 (EAS+Schedutil+Optimized Boost Framework+Optimized Thermals)
 sdm675 (EAS+Schedutil)
 sdm835 (HMP+Interactive+Project WIPE)
 sdm660 (HMP+Interactive+Project WIPE)
