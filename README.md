@@ -14,18 +14,18 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 
 ## Profiles
 
-- powersave: based on balance mode, but with more minimized energy consumption, users may report lower UX performance. The proposal aims to reduce energy consumption by half
-- balance: smoother than the stock config with lower power consumption. Focuses on hitting the "sweet spot" between performance and power consumption. The proposal aims to reduce stock energy consumption by up to 35%
-- performance: no frequency limiting and use of more aggressive boosts based on the frequency "sweetspot" of the most powerful clusters. It aims to deliver better performance with the device lasting AT MOST one hour less
-- fast: delivers stable performance within the device's TDP limits. Made purely for benchmarks or tasks that the user cannot perform without fully demanding the CPU or GPU. The battery may last longer or shorter, depending on the ambient temperature and the load exerted
+- powersave: based on balance mode, but with lower max frequency
+- balance: smoother than the stock config with lower power consumption
+- performance: dynamic stune boost = 30 with no frequency limitation
+- fast: providing stable performance capacity considering the TDP limitation of device chassis
 
 ```plain
 Terms Meaning:
-**EAS+Schedutil**: The processor is "modern" and traditionally uses EAS.
-**HMP+Interactive**: The processor is "old" and traditionally uses HMP. There may be variations with EAS, but they will not count, as they are more specific to custom kernel/specific phones.
+**EAS+Schedutil**: The processor is "modern" and traditionally uses EAS. Then it receives optimizations that balance performance and energy efficiency as much as possible.
+**HMP+Interactive**: The processor is "old" and traditionally uses HMP. There may be variations with EAS, but they will not count, as they are more specific to custom kernel/specific phones. They then receive optimizations that mitigate the shortcomings of HMP+Interactive in being inefficient at decision-making, offering longer battery life.
 **Project WIPE**: Official support for Project Wipe has been implemented for the SOC if it is HMP+Interactive.
 **Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
-**Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
+**Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs. It also includes optimizations in the Qualcomm PerfBoost subsystem.
 **Optimized Thermals**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
 
 Supported SoCs:
