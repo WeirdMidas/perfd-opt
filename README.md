@@ -14,9 +14,9 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 
 ## Profiles
 
-- powersave: based on balance mode, but with lower max frequency
-- balance: smoother than the stock config with lower power consumption
-- performance: dynamic stune boost = 30 with no frequency limitation
+- powersave: based on balance mode, but with more restrictions on the capabilities of the SOC
+- balance: smoother than the stock config with lower power consumption and temperature
+- performance: without imposing limits on the capabilities of the SOC
 - fast: providing stable performance capacity considering the TDP limitation of device chassis
 
 ```plain
@@ -25,7 +25,7 @@ Terms Meaning:
 **HMP+Interactive**: The processor is "old" and traditionally uses HMP. There may be variations with EAS, but they will not count, as they are more specific to custom kernel/specific phones. They then receive optimizations that mitigate the shortcomings of HMP+Interactive in being inefficient at decision-making, offering longer battery life.
 **Project WIPE**: Official support for Project Wipe has been implemented for the SOC if it is HMP+Interactive.
 **Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
-**Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs. It also includes optimizations in the Qualcomm PerfBoost subsystem.
+**Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
 **Optimized Thermals**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
 
 Supported SoCs:
@@ -109,5 +109,8 @@ provide information about dynamic stune
 
 @Matt Yang
 Based on the original module and also ideas from Uperf
+
+@ROM Devs
+Thanks to certain props that improved the efficiency and performance of the UI
 ```
  
