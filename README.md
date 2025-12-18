@@ -30,6 +30,7 @@ Terms Meaning:
 **Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
 **Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
 **Optimized Thermals**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
+**Curved Input Boost**: Basically, the input boost doesn't change between profiles IF the SOC has a 6nm architecture or lower, because efficiency and voltage don't change drastically between frequencies below 1.7GHz.
 
 Supported SoCs:
 sdm865 (DynamlQ+EAS+Schedutil+Optimized DVFS curve)
@@ -38,7 +39,7 @@ sdm845 (big.LTTLE+EAS+Schedutil+Optimized DVFS curve)
 sdm765/sdm765g (DynamlQ+EAS+Schedutil)
 sdm730/sdm730g (big.LTTLE+EAS+Schedutil)
 sdm710/sdm712 (big.LTTLE+EAS+Schedutil)
-sdm680 (big.LTTLE+EAS+Schedutil+Optimized Boost Framework+Optimized Thermals)
+sdm680 (big.LTTLE+EAS+Schedutil+Optimized Boost Framework+Optimized Thermals+Curved Input Boost)
 sdm675 (big.LTTLE+EAS+Schedutil)
 sdm835 (big.LTTLE+HMP+Interactive+Project WIPE)
 sdm660 (big.LTTLE+HMP+Interactive+Project WIPE)
