@@ -26,11 +26,12 @@ Terms Meaning:
 **DynamlQ**: These are processors with a modern structure and good L3 cache, featuring optimizations that improve migration and the scheduler's ability to decide the best core for a specific task.
 **EAS+Schedutil**: The processor is "modern" and traditionally uses EAS. Then it receives optimizations that balance performance and energy efficiency as much as possible.
 **HMP+Interactive**: The processor is "old" and traditionally uses HMP. There may be variations with EAS, but they will not count, as they are more specific to custom kernel/specific phones. They then receive optimizations that mitigate the shortcomings of HMP+Interactive in being inefficient at decision-making, offering longer battery life.
-**Project WIPE**: Official support for Project Wipe has been implemented for the SOC if it is HMP+Interactive.
+**Old Project WIPE**: Official support for Project Wipe has been implemented for the SOC if it is HMP+Interactive.
+**Modern Project WIPE**: For HMP SOCs that could be modernized to current standards, an evolution of the older Project WIPE which was more focused on its time period.
 **Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
 **Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
 **Optimized Thermals**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
-**Curved Input Boost**: Basically, the input boost doesn't change between profiles IF the SOC has a 6nm architecture or lower, because efficiency and voltage don't change drastically between frequencies below 1.7GHz.
+**Curved Input Boost**: Basically, the input boost doesn't change between profiles because it finds an "ideal" boost across all frequencies. This is only relevant for SoCs that require efficiency and where the voltage curve isn't too high.
 
 Supported SoCs:
 sdm865 (DynamlQ+EAS+Schedutil+Optimized DVFS curve)
@@ -41,12 +42,12 @@ sdm730/sdm730g (big.LTTLE+EAS+Schedutil)
 sdm710/sdm712 (big.LTTLE+EAS+Schedutil)
 sdm680 (big.LTTLE+EAS+Schedutil+Optimized Boost Framework+Optimized Thermals+Curved Input Boost)
 sdm675 (big.LTTLE+EAS+Schedutil)
-sdm835 (big.LTTLE+HMP+Interactive+Project WIPE)
-sdm660 (big.LTTLE+HMP+Interactive+Project WIPE)
-sdm652/sdm650 (big.LTTLE+HMP+Interactive+Project WIPE)
-sdm636 (big.LTTLE+HMP+Interactive+Project WIPE)
-sdm450 (OctaCore+HMP+Interactive+Project WIPE)
-sdm430 (QuadCore+HMP+Interactive+Project WIPE)
+sdm835 (big.LTTLE+HMP+Interactive+Modern Project WIPE)
+sdm660 (big.LTTLE+HMP+Interactive+Modern Project WIPE+Curved Input Boost)
+sdm652/sdm650 (big.LTTLE+HMP+Interactive+Old Project WIPE)
+sdm636 (big.LTTLE+HMP+Interactive+Old Project WIPE)
+sdm450 (OctaCore+HMP+Interactive+Old Project WIPE)
+sdm430 (QuadCore+HMP+Interactive+Old Project WIPE)
 ```
 
 ## Requirements
