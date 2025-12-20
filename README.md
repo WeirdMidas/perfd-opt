@@ -43,7 +43,7 @@ sdm765/sdm765g (DynamlQ+EAS+Schedutil)
 sdm730/sdm730g (big.LTTLE+EAS+Schedutil+Optimized Phase Offsets)
 sdm710/sdm712 (big.LTTLE+EAS+Schedutil+Triple Buffer)
 sdm680 (big.LTTLE+EAS+Schedutil+Optimized Boost Framework+Optimized Thermals+Curved Input Boost+Triple Buffer+Optimized Phase Offsets)
-sdm675 (big.LTTLE+EAS+Schedutil+Triple Buffer+64-bit DexOat)
+sdm675 (big.LTTLE+EAS+Schedutil+Triple Buffer)
 sdm835 (big.LTTLE+HMP+Interactive+Modern Project WIPE+Curved Input Boost)
 sdm660 (big.LTTLE+HMP+Interactive+Modern Project WIPE+Curved Input Boost+Triple Buffer)
 sdm652/sdm650 (big.LTTLE+HMP+Interactive+Old Project WIPE+Curved Input Boost+Triple Buffer)
@@ -119,4 +119,5 @@ Based on the original module and also ideas from Uperf
 @ROM Devs
 Thanks to certain props that improved the efficiency and performance of the UI
 ```
+
  
