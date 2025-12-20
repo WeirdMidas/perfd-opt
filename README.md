@@ -21,33 +21,35 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 
 ```plain
 Terms Meaning:
-**OctaCore & QuadCore**: These are older processors that don't have large cores, only small ones. They have optimizations to improve fluidity and slightly extend battery life.
+**OctaCore & QuadCore**: These are older processors that don't have big or prime cores, only small ones. They have optimizations to improve fluidity and slightly extend battery life.
 **big.LITTLE**: This means that the SOC has a big.LITTLE structure and, in turn, receives optimizations that fit this aspect. This improves cache locality and EAS/HMP decision-making regarding tasks, prioritizing maximizing performance per watt for each task individually.
 **DynamlQ**: These are processors with a modern structure and good L3 cache, featuring optimizations that improve migration and the scheduler's ability to decide the best core for a specific task.
 **EAS+Schedutil**: The processor is "modern" and traditionally uses EAS. Then it receives optimizations that balance performance and energy efficiency as much as possible.
 **HMP+Interactive**: The processor is "old" and traditionally uses HMP. There may be variations with EAS, but they will not count, as they are more specific to custom kernel/specific phones. They then receive optimizations that mitigate the shortcomings of HMP+Interactive in being inefficient at decision-making, offering longer battery life.
 **Old Project WIPE**: Official support for Project Wipe has been implemented for the SOC if it is HMP+Interactive.
-**Modern Project WIPE**: For HMP SOCs that could be modernized to current standards, an evolution of the older Project WIPE which was more focused on its time period.
+**Modern Project WIPE**: An evolution of the original wipe project, focused on being better than the LKT wipe project with optimizations more focused on delivering the necessary performance with zero impact on energy consumption.
 **Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
 **Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
 **Optimized Thermals**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
 **Curved Input Boost**: Basically, the input boost doesn't change between profiles because it finds an "ideal" boost across all frequencies. This is only relevant for SoCs that require efficiency and where the voltage curve isn't too high.
+**Triple Buffer**: For SOCs with very weak GPUs, such as the sdm680, a triple buffer is added to trade a portion of RAM for better rendering speed.
+**Optimized Phase Offsets**: In situations where the SOC's GPU is very weak but needs some headroom for rendering.
 
 Supported SoCs:
 sdm865 (DynamlQ+EAS+Schedutil+Optimized DVFS curve)
 sdm855/sdm855+ (DynamlQ+EAS+Schedutil+Optimized DVFS curve)
 sdm845 (big.LTTLE+EAS+Schedutil+Optimized DVFS curve)
 sdm765/sdm765g (DynamlQ+EAS+Schedutil)
-sdm730/sdm730g (big.LTTLE+EAS+Schedutil)
-sdm710/sdm712 (big.LTTLE+EAS+Schedutil)
-sdm680 (big.LTTLE+EAS+Schedutil+Optimized Boost Framework+Optimized Thermals+Curved Input Boost)
-sdm675 (big.LTTLE+EAS+Schedutil)
-sdm835 (big.LTTLE+HMP+Interactive+Modern Project WIPE)
-sdm660 (big.LTTLE+HMP+Interactive+Modern Project WIPE+Curved Input Boost)
-sdm652/sdm650 (big.LTTLE+HMP+Interactive+Old Project WIPE)
-sdm636 (big.LTTLE+HMP+Interactive+Old Project WIPE)
-sdm450 (OctaCore+HMP+Interactive+Old Project WIPE)
-sdm430 (QuadCore+HMP+Interactive+Old Project WIPE)
+sdm730/sdm730g (big.LTTLE+EAS+Schedutil+Optimized Phase Offsets)
+sdm710/sdm712 (big.LTTLE+EAS+Schedutil+Triple Buffer)
+sdm680 (big.LTTLE+EAS+Schedutil+Optimized Boost Framework+Optimized Thermals+Curved Input Boost+Triple Buffer+Optimized Phase Offsets)
+sdm675 (big.LTTLE+EAS+Schedutil+Triple Buffer+64-bit DexOat)
+sdm835 (big.LTTLE+HMP+Interactive+Modern Project WIPE+Curved Input Boost)
+sdm660 (big.LTTLE+HMP+Interactive+Modern Project WIPE+Curved Input Boost+Triple Buffer)
+sdm652/sdm650 (big.LTTLE+HMP+Interactive+Old Project WIPE+Curved Input Boost+Triple Buffer)
+sdm636 (big.LTTLE+HMP+Interactive+Old Project WIPE+Curved Input Boost+Triple Buffer)
+sdm450 (OctaCore+HMP+Interactive+Old Project WIPE+Triple Buffer)
+sdm430 (QuadCore+HMP+Interactive+Old Project WIPE+Triple Buffer)
 ```
 
 ## Requirements
