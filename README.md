@@ -33,14 +33,15 @@ Terms Meaning:
 **Optimized Thermals**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
 **Curved Input Boost**: Basically, the input boost doesn't change between profiles because it finds an "ideal" boost across all frequencies. This is only relevant for SoCs that require efficiency and where the voltage curve isn't too high.
 **Triple Buffer**: For SOCs with very weak GPUs, such as the sdm680, a triple buffer is added to trade a portion of RAM for better rendering speed.
+**Frame Pacing**: A vendor extension used to improve stability and GPU usage in frame rendering by better synchronizing with screen timers.
 **Optimized Phase Offsets**: In situations where the SOC's GPU is very weak but needs some headroom for rendering.
 
 Supported SoCs:
-sdm865 (DynamlQ+EAS+Schedutil+Optimized DVFS curve)
-sdm855/sdm855+ (DynamlQ+EAS+Schedutil+Optimized DVFS curve)
-sdm845 (big.LTTLE+EAS+Schedutil+Optimized DVFS curve)
-sdm765/sdm765g (DynamlQ+EAS+Schedutil)
-sdm730/sdm730g (big.LTTLE+EAS+Schedutil+Optimized Phase Offsets)
+sdm865 (DynamlQ+EAS+Schedutil+Optimized DVFS curve+Frame Pacing)
+sdm855/sdm855+ (DynamlQ+EAS+Schedutil+Optimized DVFS curve+Frame Pacing)
+sdm845 (big.LTTLE+EAS+Schedutil+Optimized DVFS curve+Frame Pacing)
+sdm765/sdm765g (DynamlQ+EAS+Schedutil+Frame Pacing)
+sdm730/sdm730g (big.LTTLE+EAS+Schedutil+Optimized Phase Offsets+Frame Pacing)
 sdm710/sdm712 (big.LTTLE+EAS+Schedutil+Triple Buffer)
 sdm680 (big.LTTLE+EAS+Schedutil+Optimized Boost Framework+Optimized Thermals+Curved Input Boost+Triple Buffer+Optimized Phase Offsets)
 sdm675 (big.LTTLE+EAS+Schedutil+Triple Buffer)
@@ -119,5 +120,4 @@ Based on the original module and also ideas from Uperf
 @ROM Devs
 Thanks to certain props that improved the efficiency and performance of the UI
 ```
-
  
