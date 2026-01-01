@@ -39,7 +39,7 @@ Terms Meaning:
 Supported SoCs:
 sdm865 (DynamlQ+EAS&Schedutil+Optimized DVFS curve+EAS Alignment+Frame Pacing)
 sdm855/sdm855+ (DynamlQ+EAS&Schedutil+Optimized DVFS curve+EAS Alignment+Frame Pacing)
-sdm845 (big.LTTLE+EAS&Schedutil+Optimized DVFS curve+EAS Alignment+Frame Pacing)
+sdm845 (DynamlQ+EAS&Schedutil+Optimized DVFS curve+EAS Alignment+Frame Pacing)
 sdm765/sdm765g (DynamlQ+EAS&Schedutil+EAS Alignment+Frame Pacing)
 sdm730/sdm730g (DynamlQ+EAS&Schedutil+EAS Alignment+Frame Pacing)
 sdm710/sdm712 (DynamlQ+EAS&Schedutil+EAS Alignment+Triple Buffer)
