@@ -2,9 +2,9 @@
 
 ## Get the most out of Snapdragon — fast, efficient, and balanced
 
-perfd-opt is a module designed to improve the user experience and energy efficiency of Snapdragon devices, both on modern SoCs using EAS + schedutil and older ones using HMP + interactive.
+perfd-opt is a specialized performance module designed to maximize user experience and energy efficiency on Snapdragon devices with multi-cluster architectures. By focusing exclusively on SoCs with a cluster hierarchy (Big.LITTLE and DynamIQ), the module targets the sophisticated task-migration and scheduling logic found in mid-to-high-end hardware.
 
-Unlike projects such as WIPE, which rely on simulation of the interactive governor, perfd-opt applies direct adjustments to Qualcomm’s QTI Boost Framework (when available) and complementary sysfs optimizations. This enables more aggressive behavior during user interactions (touch, scrolling, app launches) and a fast return to efficient OPPs (Operating Performance Points) once activity ends—an efficient race-to-idle strategy that prioritizes the most economical operating point for the current workload.
+Unlike projects that rely solely on governor simulations, perfd-opt applies direct, architecture-aware adjustments to Qualcomm’s QTI Boost Framework and core sysfs parameters. It is engineered to distinguish between efficiency and performance clusters, ensuring that high-demand tasks are instantly routed to "Big" cores while background activity remains on "Little" cores to save power.
 
 For Snapdragon models with inefficient power–frequency curves (common in certain 8xx series SoCs), the module also introduces optimized DVFS limits, refining minimum and maximum frequencies to reduce waste and improve efficiency by up to ~40% in specific workloads without sacrificing responsiveness.
 
@@ -53,8 +53,6 @@ sdm808 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Optimized DVFS 
 sdm660 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Curved Input Boost+Triple Buffer)
 sdm652/sdm650 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Curved Input Boost+Triple Buffer)
 sdm636 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Curved Input Boost+Triple Buffer)
-sdm450 (OctaCore+HMP&Interactive+Project WIPE+Triple Buffer)
-sdm430 (QuadCore+HMP&Interactive+Project WIPE+Triple Buffer)
 ```
 
 ## Requirements
