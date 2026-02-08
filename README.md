@@ -2,7 +2,7 @@
 
 ## Get the most out of Snapdragon — fast, efficient, and balanced
 
-perfd-opt is a specialized performance module designed to maximize user experience and energy efficiency on Snapdragon devices with multi-cluster architectures. By focusing exclusively on SoCs with a cluster hierarchy (Big.LITTLE and DynamIQ), the module targets the sophisticated task-migration and scheduling logic found in mid-to-high-end hardware.
+Perfd-opt is a specialized performance module designed to maximize user experience and energy efficiency on Snapdragon devices with multi-cluster architectures. By focusing exclusively on SoCs with a cluster hierarchy (Big.LITTLE and DynamIQ), the module targets the sophisticated task-migration and scheduling logic found in mid-to-high-end hardware. With the introduction of Energy Aware Scheduling (EAS) in devices released from 2018 onwards, we focused our implementation on the native integration offered by this generation of processors. This approach allows Perfd-opt to optimize task scheduling and placement based on energy efficiency. By improving the cost-benefit model of each SoC's EAS, Perfd-opt reduces hesitation and inaccuracies in decision-making. The result is faster task allocation, minimizing cache locality loss (L1/L2) and ensuring extremely efficient process migrations.
 
 Unlike projects that rely solely on governor simulations, perfd-opt applies direct, architecture-aware adjustments to Qualcomm’s QTI Boost Framework and core sysfs parameters. It is engineered to distinguish between efficiency and performance clusters, ensuring that high-demand tasks are instantly routed to "Big" cores while background activity remains on "Little" cores to save power.
 
@@ -21,38 +21,33 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 
 ```plain
 Terms Meaning:
-**OctaCore & QuadCore**: These are older processors that don't have big or prime cores, only small ones. They have optimizations to improve fluidity and slightly extend battery life.
+
+Architectures and Topologies:
 **big.LITTLE**: This means that the SOC has a big.LITTLE structure and, in turn, receives optimizations that fit this aspect. This improves cache locality and EAS/HMP decision-making regarding tasks, prioritizing maximizing performance per watt for each task individually.
 **DynamlQ**: These are processors with a modern structure and good L3 cache, featuring optimizations that improve migration and the scheduler's ability to decide the best core for a specific task.
+
+Schedulers and Templates:
 **EAS&Schedutil**: The processor is "modern" and traditionally uses EAS. Then it receives optimizations that balance performance and energy efficiency as much as possible. In addition to delivering on-time performance, it reduces hesitation and scheduling errors, allowing the EAS to extract the maximum possible potential from its energy model.
-  - **EAS Alignment**: Implement energy efficiency optimizations such as big cluster clocks being between 600-800. These implementations are intended to make the EAS of the aforementioned SOCs closer to the EAS of recent SOCs designed for efficiency.
-**HMP&Interactive**: The processor is "old" and traditionally uses HMP. There may be variations with EAS, but they will not count, as they are more specific to custom kernel/specific phones. They then receive optimizations that mitigate the shortcomings of HMP+Interactive in being inefficient at decision-making, offering longer battery life.
-**Project WIPE**: Official support for Project Wipe has been implemented for the SOC if it is HMP+Interactive.
-  - **Project Wipe: Days of Tomorrow**: An evolution of the traditional project wipe, focused on making the HMP scheduler and the interactive governor "energy conscious," this means that HMP and Interactive become closer to the EAS scheduler and Schedutil governor of modern devices. This allows HMP and Interactive to be usable today for both efficiency and performance.
+  - **Alignment with Modern Standards**: Implement energy efficiency optimizations such as big cluster min clocks being between 600-800. These implementations are intended to make the EAS of the aforementioned SOCs closer to the EAS of recent SOCs designed for efficiency.
+  - **Input Boost Disabling**: If the SOC proves to be optimized enough for the user to trust their optimized EAS scheduler and qti boost, input boost is disabled. This allows schedutil to precisely define the necessary frequencies for each interaction and uses qti boost to boost during moments of hesitation. Each SOC with this optimization demonstrates that the user can trust their EAS scheduler and qti boost to handle all cases with maximum efficiency and without voltage spikes.
+
+Miscellaneous and Secondary Optimizations:
 **Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
 **Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
 **Optimized Thermals**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
-**Curved Input Boost**: Basically, the input boost doesn't change between profiles because it finds an "ideal" boost across all frequencies. This is only relevant for SoCs that require efficiency and where the voltage curve isn't too high.
-  - **Input Boost Disabling**: If the SOC proves to be optimized enough for the user to trust their optimized EAS scheduler and qti boost, input boost is disabled. This allows schedutil to precisely define the necessary frequencies for each interaction and uses qti boost to boost during moments of hesitation. Each SOC with this optimization demonstrates that the user can trust their EAS scheduler and qti boost to handle all cases with maximum efficiency and without voltage spikes.
 **Triple Buffer**: For SOCs with very weak GPUs, such as the sdm680, a triple buffer is added to trade a portion of RAM for better rendering speed.
 **Frame Pacing**: A vendor extension used to improve stability and GPU usage in frame rendering by better synchronizing with screen timers.
 
 Supported SoCs:
-sdm865 (DynamlQ+EAS&Schedutil+Optimized DVFS curve+EAS Alignment+Frame Pacing)
-sdm855/sdm855+ (DynamlQ+EAS&Schedutil+Optimized DVFS curve+EAS Alignment+Frame Pacing)
-sdm845 (DynamlQ+EAS&Schedutil+Optimized DVFS curve+EAS Alignment+Frame Pacing)
-sdm765/sdm765g (DynamlQ+EAS&Schedutil+EAS Alignment+Frame Pacing)
-sdm730/sdm730g (DynamlQ+EAS&Schedutil+EAS Alignment+Frame Pacing)
-sdm710/sdm712 (DynamlQ+EAS&Schedutil+EAS Alignment+Triple Buffer)
-sdm680 (big.LTTLE+EAS&Schedutil+EAS Alignment+Optimized Boost Framework+Optimized Thermals+Curved Input Boost+Triple Buffer)
-sdm675 (DynamlQ+EAS&Schedutil+EAS Alignment+Triple Buffer)
-sdm835 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Curved Input Boost)
-sdm820/821 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Optimized DVFS Curve+Curved Input Boost)
-sdm810 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Optimized DVFS Curve+Curved Input Boost)
-sdm808 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Optimized DVFS Curve+Curved Input Boost)
-sdm660 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Curved Input Boost+Triple Buffer)
-sdm652/sdm650 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Curved Input Boost+Triple Buffer)
-sdm636 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Curved Input Boost+Triple Buffer)
+sdm865 (DynamlQ+EAS&Schedutil+Optimized DVFS curve+Alignment with Modern Standards)
+sdm855/sdm855+ (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
+sdm845 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
+sdm765/sdm765g (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
+sdm730/sdm730g (DynamlQ+EAS&Schedutil+Alignment with Modern Standards)
+sdm710/sdm712 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards)
+sm6225 (sdm662/680/685) (big.LTTLE+EAS&Schedutil)
+sdm675 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards)
+sdm665 (big.LTTLE+EAS&Schedutil)
 ```
 
 ## Requirements
@@ -80,9 +75,9 @@ sdm636 (big.LTTLE+HMP&Interactive+Project Wipe: Days of Tomorrow+Curved Input Bo
 - Matt Yang's tests on the cost-benefit of migration. Using the binder as a test (seen in Uperf's old project before V3).
 - Explanations from engineers about certain aspects of EAS, mainly its ideology and the ways it decides to be more energy-conscious.
 
-### Recommendations for a better experience
+### Suggestions for Complementary Modules
 
-- Use the highest maximum refresh rate of your device. Due to optimizations we implemented in the refresh rate driver and SurfaceFlinger, we have reduced the power penalties of high refresh rates by up to 7%. However, if you want even greater savings, we recommend using a lower "peak" refresh rate. A tip: if you don't like using the highest refresh rate on your screen (for example, you have 120Hz but want to use 90Hz), lower the refresh rate and install perfd-opt. You will receive the optimizations for that refresh rate, as long as you maintain it. This means that perfd-opt has not yet been optimized enough to adapt to changes in the maximum refresh rate after installing the module.
+- [AsoulOpt](https://github.com/nakixii/Magisk_AsoulOpt@) — A module that improves EAS decision-making regarding AAA game threads or games listed in the repository, allowing EAS to prioritize game threads on large cores, thus improving predictability and stability. It includes up to three migration modes that the user can choose, enabling EAS to better determine the performance and placement of game threads.
 
 ## Switch modes
 
