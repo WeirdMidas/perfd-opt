@@ -55,7 +55,7 @@ sdm665 (big.LTTLE+EAS&Schedutil)
 1. Android 8 or higher
 2. Magisk, KSU or Apatch, the most up-to-date version possible if you can
 3. It is exclusive to Snapdragon processors! It will not be compatible with other SOCs (until further notice)
-4. Currently, it is only compatible with EAS & HMP. Other custom schedulers like CASS, etc., may not be as compatible
+4. Currently, it is only compatible with EAS. Other custom schedulers like CASS or old HMP, etc., may not be as compatible
 5. We prefer the QTI Boost Framework as the primary framework we will optimize; therefore, there may not be optimizations for other Boost frameworks, such as libperfmgr and others
 6. Prefers stock kernels; extremely modified kernels that even modify the frequency table may not work very well with the module
 7. It might not work as efficiently if your kernel uses PELT Tracker instead of WALT. Many consider WALT a "villain," even though it can be drastically optimized for efficiency; you just need to be smart
@@ -122,4 +122,5 @@ Based on the original module and also ideas from Uperf
 @ROM Devs
 Thanks to certain props that improved the efficiency and performance of the UI
 ```
+
  
