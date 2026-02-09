@@ -23,7 +23,7 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 Terms Meaning:
 
 Architectures and Topologies:
-**big.LITTLE**: This means that the SOC has a big.LITTLE structure and, in turn, receives optimizations that fit this aspect. This improves cache locality and EAS/HMP decision-making regarding tasks, prioritizing maximizing performance per watt for each task individually.
+**big.LITTLE**: This means that the SOC has a big.LITTLE structure and, in turn, receives optimizations that fit this aspect. This improves cache locality and EAS decision-making regarding tasks, prioritizing maximizing performance per watt for each task individually.
 **DynamlQ**: These are processors with a modern structure and good L3 cache, featuring optimizations that improve migration and the scheduler's ability to decide the best core for a specific task.
 
 Schedulers and Templates:
@@ -124,3 +124,4 @@ Thanks to certain props that improved the efficiency and performance of the UI
 ```
 
  
+
