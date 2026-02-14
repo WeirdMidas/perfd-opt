@@ -12,20 +12,33 @@ The goal is simple: deliver the best balance between performance, responsiveness
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
+## Features
+- **Specific optimizations** for Snapdragon SOC and the EAS environment. However, instead of following an "all-for-one" methodology, perfd-opt has a compatibility list where each listed processor is optimized individually, attempting to extract the "maximum" balance between performance and energy efficiency as it can receive optimizations.
+- **Automatic Hardware Detection**: Detects the CPU architecture (4+4, 6+2, 4x3x1 & 6+1+1), whether it has full EAS or generic EAS, the GPU model, whether it is capable of receiving secondary optimizations (such as improvements in the SOC boost framework and/or frame pacing), and the availability of UFS storage. Even without including I/O and memory optimizations, it still shows a complete overview of the user's hardware, allowing them to understand their device and know which optimizations are applied to it.
+- **Predefined Power Profiles**:
+  - **powersave**: Maximum battery power, with penalties to UX performance, possibly depending on whether the device can handle it.
+  - **balance**: Balance between performance and efficiency, ideal for daily use.
+  - **performance**: Full performance without restrictions, aims to make EAS core selection more "performance-oriented".
+  - **fast**: Stable performance and throughout depending on the device's TDP and chassis.
+- **Miscellaneous and Secondary Optimizations**: Such as improvements to the SOC's thermal behavior, to maintain the SOC temperature between 38-48 degrees even in hot places, and other optimizations such as the addition of frame pacing, Triple Buffer for weak Adreno GPUs, and other optimizations that help make the SOC more predictable and efficient.
+- **Compatibility between full Snapdragon WALT (which comes with a directory) and generic WALT (which comes without a directory)**: We have also implemented optimizations that extract the maximum from these two Qualcomm device scenarios, allowing each device to achieve its efficiency and performance according to the availability of parameters to optimize, enabling all SOCs to be adapted to ALMOST ANY SCENARIO.
+
 ## Profiles
 
-- powersave: based on balance mode, but with more restrictions on the capabilities of the SOC, may lag in some scenarios where the load fluctuates dramatically
-- balance: smoother than the stock config with lower power consumption and temperature
-- performance: without imposing limits on the capabilities of the SOC
-- fast: providing stable performance capacity considering the TDP limitation of device chassis
+- **powersave**: based on balance mode, but with more restrictions on the capabilities of the SOC, may lag in some scenarios where the load fluctuates dramatically
+- **balance**: smoother than the stock config with lower power consumption and temperature
+- **performance**: without imposing limits on the capabilities of the SOC
+- **fast**: providing stable performance capacity considering the TDP limitation of device chassis
 
 ```plain
 Terms Meaning:
 
 Architectures and Topologies:
 **big.LITTLE**: This means that the SOC has a big.LITTLE structure and, in turn, receives optimizations that fit this aspect. This improves cache locality and EAS decision-making regarding tasks, prioritizing maximizing performance per watt for each task individually.
+  - Exclamation: As with big.LITTLE SOCs, the cost of migrating is "expensive" (due to not having a connected bus, but an external one), we cannot favor techniques that reduce migration costs, such as the sched_ed_boost of WALT. We must prioritize a strict separation of where tasks should reside, sending only the heaviest tasks (such as games) to the most powerful cores, while medium and small tasks remain on the smaller cores. We will heavily utilize cache locality, but without forcing extreme core saturation.
 **DynamlQ**: These are processors with a modern structure and good L3 cache, featuring optimizations that improve migration and the scheduler's ability to decide the best core for a specific task.
-
+  - Exclamation: As in DynamlQ SOCs the cost of migrating is extremely "cheap" (due to the connected bus and the LLC and/or L3 cache that connects all cores), we can reduce migration costs (such as through sched_ed_boost) to allow DynamlQ to avoid unnecessary time spent on LITTLE cores, allowing DynamlQ SOCs to leverage their specialty: migrating and choosing the best possible core for each task with the minimum necessary expenditure to execute it.
+  
 Schedulers and Templates:
 **EAS&Schedutil**: The processor is "modern" and traditionally uses EAS. Then it receives optimizations that balance performance and energy efficiency as much as possible. In addition to delivering on-time performance, it reduces hesitation and scheduling errors, allowing the EAS to extract the maximum possible potential from its energy model.
   - **Alignment with Modern Standards**: Implement energy efficiency optimizations such as big cluster min clocks being between 600-800. These implementations are intended to make the EAS of the aforementioned SOCs closer to the EAS of recent SOCs designed for efficiency.
@@ -39,7 +52,7 @@ Miscellaneous and Secondary Optimizations:
 **Frame Pacing**: A vendor extension used to improve stability and GPU usage in frame rendering by better synchronizing with screen timers.
 
 Supported SoCs:
-sdm865 (DynamlQ+EAS&Schedutil+Optimized DVFS curve+Alignment with Modern Standards)
+sdm865 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
 sdm855/sdm855+ (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
 sdm845 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
 sdm765/sdm765g (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
@@ -121,7 +134,10 @@ Based on the original module and also ideas from Uperf
 
 @ROM Devs
 Thanks to certain props that improved the efficiency and performance of the UI
+
+@Pedrozzz (King Tweaks)
+For some tweaks found on King Tweaks that depend on the manufacturer, I will give credit for them
+
+@JUANIMAN
+Because it gave me inspiration to improve the perfd-opt README, basically our modules are "opposites" of each other
 ```
-
- 
-
