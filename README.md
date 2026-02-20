@@ -22,10 +22,11 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
   - **fast**: Stable performance and throughout depending on the device's TDP and chassis.
 - **Miscellaneous and Secondary Optimizations**: Such as improvements to the SOC's thermal behavior, to maintain the SOC temperature between 38-48 degrees even in hot places, and other optimizations such as the addition of frame pacing, Triple Buffer for weak Adreno GPUs, and other optimizations that help make the SOC more predictable and efficient.
 - **Compatibility between full Snapdragon WALT (which comes with a directory) and generic WALT (which comes without a directory)**: We have also implemented optimizations that extract the maximum from these two Qualcomm device scenarios, allowing each device to achieve its efficiency and performance according to the availability of parameters to optimize, enabling all SOCs to be adapted to ALMOST ANY SCENARIO.
+- **Maintains the use of Governor Walt if it exists**: If the Snapdragon comes with Governor Walt, it is maintained to have a governor capable of meeting the needs of user UX fluidity, where it comes with optimizations that filter unnecessary peaks, reducing the energy consumption of this somewhat "power-hungry" governor in a slight way.
 
 ## Profiles
 
-- **powersave**: based on balance mode, but with more restrictions on the capabilities of the SOC, may lag in some scenarios where the load fluctuates dramatically
+- **powersave**: based on balance mode, but the maximum capacity is capped
 - **balance**: smoother than the stock config with lower power consumption and temperature
 - **performance**: without imposing limits on the capabilities of the SOC
 - **fast**: providing stable performance capacity considering the TDP limitation of device chassis
@@ -35,15 +36,17 @@ Terms Meaning:
 
 Architectures and Topologies:
 **big.LITTLE**: This means that the SOC has a big.LITTLE structure and, in turn, receives optimizations that fit this aspect. This improves cache locality and EAS decision-making regarding tasks, prioritizing maximizing performance per watt for each task individually.
-  - Exclamation: As with big.LITTLE SOCs, the cost of migrating is "expensive" (due to not having a connected bus, but an external one), we cannot favor techniques that reduce migration costs, such as the sched_ed_boost of WALT. We must prioritize a strict separation of where tasks should reside, sending only the heaviest tasks (such as games) to the most powerful cores, while medium and small tasks remain on the smaller cores. We will heavily utilize cache locality, but without forcing extreme core saturation.
+  - Best Core by Profile: In efficiency profiles, the core that saves the most energy is preferred over the core that delivers the most performance. In performance profiles, the core that delivers the most performance is preferred over the core that saves the most energy.
 **DynamlQ**: These are processors with a modern structure and good L3 cache, featuring optimizations that improve migration and the scheduler's ability to decide the best core for a specific task.
-  - Exclamation: As in DynamlQ SOCs the cost of migrating is extremely "cheap" (due to the connected bus and the LLC and/or L3 cache that connects all cores), we can reduce migration costs (such as through sched_ed_boost) to allow DynamlQ to avoid unnecessary time spent on LITTLE cores, allowing DynamlQ SOCs to leverage their specialty: migrating and choosing the best possible core for each task with the minimum necessary expenditure to execute it.
+  - Best overall core: In DynamiQ SOCs, the preference for the best, most energy-efficient core is global, favoring SOT time compared to the overall performance of these devices.
   
 Schedulers and Templates:
 **EAS&Schedutil**: The processor is "modern" and traditionally uses EAS. Then it receives optimizations that balance performance and energy efficiency as much as possible. In addition to delivering on-time performance, it reduces hesitation and scheduling errors, allowing the EAS to extract the maximum possible potential from its energy model.
   - **Alignment with Modern Standards**: Implement energy efficiency optimizations such as big cluster min clocks being between 600-800. These implementations are intended to make the EAS of the aforementioned SOCs closer to the EAS of recent SOCs designed for efficiency.
   - **Input Boost Disabling**: If the SOC proves to be optimized enough for the user to trust their optimized EAS scheduler and qti boost, input boost is disabled. This allows schedutil to precisely define the necessary frequencies for each interaction and uses qti boost to boost during moments of hesitation. Each SOC with this optimization demonstrates that the user can trust their EAS scheduler and qti boost to handle all cases with maximum efficiency and without voltage spikes.
-
+  - **Aligned Migration Thresholds**: For SOCs that have only two clusters and need to make ideal decisions about what to keep on the little cores and send to the big cores, filtering tasks that can be resolved on the small cores while maintaining margin for processing peaks, avoiding underutilizing the little cores and making them spend more energy when the big cores could resolve them more efficiently and at an average frequency.
+  - **No migration cost**: If the SOC has an efficient architecture, we can afford to have no migration cost and allow the EAS to make decisions about which tasks to assign to the cores based solely on energy costs.
+  
 Miscellaneous and Secondary Optimizations:
 **Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
 **Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
@@ -52,15 +55,16 @@ Miscellaneous and Secondary Optimizations:
 **Frame Pacing**: A vendor extension used to improve stability and GPU usage in frame rendering by better synchronizing with screen timers.
 
 Supported SoCs:
-sdm865 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
-sdm855/sdm855+ (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
-sdm845 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
-sdm765/sdm765g (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Optimized DVFS curve)
-sdm730/sdm730g (DynamlQ+EAS&Schedutil+Alignment with Modern Standards)
-sdm710/sdm712 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards)
-sm6225 (sdm662/680/685) (big.LTTLE+EAS&Schedutil)
-sdm675 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards)
-sdm665 (big.LTTLE+EAS&Schedutil)
+sdm865 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+No migration cost+Optimized DVFS curve)
+sdm855/sdm855+ (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+No migration cost+Optimized DVFS curve)
+sdm845 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Aligned Migration Thresholds+Optimized DVFS curve)
+sdm765/sdm765g (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+No migration cost+Optimized DVFS curve)
+sdm730/sdm730g (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Aligned Migration Thresholds)
+sdm710/sdm712 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Aligned Migration Thresholds)
+sm6225 (sdm662/sdm680) (big.LTTLE+EAS&Schedutil+Aligned Migration Thresholds)
+- We do not support sdm685 because we could not find its SOCID; we only have the SOCIDs for sdm662 and sdm680
+sdm675 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Aligned Migration Thresholds)
+sdm665 (big.LTTLE+EAS&Schedutil+Aligned Migration Thresholds)
 ```
 
 ## Requirements
