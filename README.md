@@ -20,9 +20,13 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
   - **balance**: Balance between performance and efficiency, ideal for daily use.
   - **performance**: Full performance without restrictions, aims to make EAS core selection more "performance-oriented".
   - **fast**: Stable performance and throughout depending on the device's TDP and chassis.
+- **OC Mode (Underclock and Overclock)**: Maximum clock modes for the Big/Prime Cluster defined by perfd, allowing you to choose between:
+  - **normal**: Clock speed that delivers performance and efficiency within the expected range.
+  - **under**: Reduced clock speed that reduces total power consumption, with a slight impact on UX.
 - **Miscellaneous and Secondary Optimizations**: Such as improvements to the SOC's thermal behavior, to maintain the SOC temperature between 38-48 degrees even in hot places, and other optimizations such as the addition of frame pacing, Triple Buffer for weak Adreno GPUs, and other optimizations that help make the SOC more predictable and efficient.
 - **Compatibility between full Snapdragon WALT (which comes with a directory) and generic WALT (which comes without a directory)**: We have also implemented optimizations that extract the maximum from these two Qualcomm device scenarios, allowing each device to achieve its efficiency and performance according to the availability of parameters to optimize, enabling all SOCs to be adapted to ALMOST ANY SCENARIO.
 - **Maintains the use of Governor Walt if it exists**: If the Snapdragon comes with Governor Walt, it is maintained to have a governor capable of meeting the needs of user UX fluidity, where it comes with optimizations that filter unnecessary peaks, reducing the energy consumption of this somewhat "power-hungry" governor in a slight way.
+- **Recommended to use the device's maximum screen refresh rate**: The way the device switches between refresh rates has been optimized, allowing you to take advantage of the device's maximum refresh rate without incurring as many energy efficiency penalties, since the idle transition is much more efficient and faster.
 
 ## Profiles
 
@@ -32,39 +36,37 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **fast**: providing stable performance capacity considering the TDP limitation of device chassis
 
 ```plain
-Terms Meaning:
+Explanations and Terms of the Applied Optimizations
 
 Architectures and Topologies:
-**big.LITTLE**: This means that the SOC has a big.LITTLE structure and, in turn, receives optimizations that fit this aspect. This improves cache locality and EAS decision-making regarding tasks, prioritizing maximizing performance per watt for each task individually.
-  - Best Core by Profile: In efficiency profiles, the core that saves the most energy is preferred over the core that delivers the most performance. In performance profiles, the core that delivers the most performance is preferred over the core that saves the most energy.
-**DynamlQ**: These are processors with a modern structure and good L3 cache, featuring optimizations that improve migration and the scheduler's ability to decide the best core for a specific task.
-  - Best overall core: In DynamiQ SOCs, the preference for the best, most energy-efficient core is global, favoring SOT time compared to the overall performance of these devices.
-  
-Schedulers and Templates:
-**EAS&Schedutil**: The processor is "modern" and traditionally uses EAS. Then it receives optimizations that balance performance and energy efficiency as much as possible. In addition to delivering on-time performance, it reduces hesitation and scheduling errors, allowing the EAS to extract the maximum possible potential from its energy model.
-  - **Alignment with Modern Standards**: Implement energy efficiency optimizations such as big cluster min clocks being between 600-800. These implementations are intended to make the EAS of the aforementioned SOCs closer to the EAS of recent SOCs designed for efficiency.
-  - **Input Boost Disabling**: If the SOC proves to be optimized enough for the user to trust their optimized EAS scheduler and qti boost, input boost is disabled. This allows schedutil to precisely define the necessary frequencies for each interaction and uses qti boost to boost during moments of hesitation. Each SOC with this optimization demonstrates that the user can trust their EAS scheduler and qti boost to handle all cases with maximum efficiency and without voltage spikes.
-  - **Aligned Migration Thresholds**: For SOCs that have only two clusters and need to make ideal decisions about what to keep on the little cores and send to the big cores, filtering tasks that can be resolved on the small cores while maintaining margin for processing peaks, avoiding underutilizing the little cores and making them spend more energy when the big cores could resolve them more efficiently and at an average frequency.
-  - **No migration cost**: If the SOC has an efficient architecture, we can afford to have no migration cost and allow the EAS to make decisions about which tasks to assign to the cores based solely on energy costs.
-  
-Miscellaneous and Secondary Optimizations:
-**Optimized DVFS Curve**: Its minimum and maximum frequencies are optimized for better efficiency within its architecture. Designed to reduce energy consumption by up to 40% or more. Only implemented in SOCs with overheating problems or a poor efficiency curve.
-**Optimized Boost Framework**: Optimizations and improvements have been implemented in the SOC's boost framework, specifically in its QTI Boost Framework. The optimizations are designed to improve the user experience without increasing energy consumption costs.
-**Optimized Thermals**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
-**Triple Buffer**: For SOCs with very weak GPUs, such as the sdm680, a triple buffer is added to trade a portion of RAM for better rendering speed.
-**Frame Pacing**: A vendor extension used to improve stability and GPU usage in frame rendering by better synchronizing with screen timers.
+- **big.LITTLE**: This means that the SOC has a big.LITTLE structure and, in turn, receives optimizations that fit this aspect. This improves cache locality and EAS decision-making regarding tasks, prioritizing maximizing performance per watt for each task individually.
+- **DynamlQ**: These are processors with a modern structure and good L3 cache, featuring optimizations that improve migration and the scheduler's ability to decide the best core for a specific task.
+
+Scheduling Methods:
+- **Alignment with Modern Standards**: Implement energy efficiency optimizations such as big cluster min clocks being between 600-800. These implementations are intended to make the EAS of the aforementioned SOCs closer to the EAS of recent SOCs designed for efficiency.
+- **Input Boost Disabling**: If the SOC proves to be optimized enough for the user to trust their optimized EAS scheduler and qti boost, input boost is disabled. This allows schedutil to precisely define the necessary frequencies for each interaction and uses qti boost to boost during moments of hesitation. Each SOC with this optimization demonstrates that the user can trust their EAS scheduler and qti boost to handle all cases with maximum efficiency and without voltage spikes.
+- **Aligned Migration Thresholds**: For SOCs that have only two clusters and need to make ideal decisions about what to keep on the little cores and send to the big cores, filtering tasks that can be resolved on the small cores while maintaining margin for processing peaks, avoiding underutilizing the little cores and making them spend more energy when the big cores could resolve them more efficiently and at an average frequency.
+- **No Migration Cost**: If the SOC has an efficient architecture, we can afford to have no migration cost and allow the EAS to make decisions about which tasks to assign to the cores based solely on energy costs.
+- **OC Mode**: Ability to choose between normal and reduced maximum clock speed, to save power or allow for better raw performance.
+
+Miscellaneous Optimizations:
+- **QTI Boost Framework Tuning**: SOCs that have this flag mean that they will receive improvements and optimizations in the (QTI) Boost Framework, where these optimizations change according to the profile, being more or less aggressive depending on the energy profile selected at the moment.
+- **Tuned Thermal Throttling**: It provides thermal optimizations for the SOC, where it is optimized so that the SOC has a thermal capacity that keeps it within 38-48 degrees, never exceeding 48 degrees where the user feels discomfort to the touch.
+- **Triple Buffer**: For SOCs with very weak GPUs, such as the sdm680, a triple buffer is added to trade a portion of RAM for better maneuvering space for the GPU.
+- **Frame Pacing**: A vendor extension used to improve stability and GPU usage in frame rendering by better synchronizing with screen timers.
 
 Supported SoCs:
-sdm865 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+No migration cost+Optimized DVFS curve)
-sdm855/sdm855+ (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+No migration cost+Optimized DVFS curve)
-sdm845 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Aligned Migration Thresholds+Optimized DVFS curve)
-sdm765/sdm765g (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+No migration cost+Optimized DVFS curve)
-sdm730/sdm730g (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Aligned Migration Thresholds)
-sdm710/sdm712 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Aligned Migration Thresholds)
-sm6225 (sdm662/sdm680) (big.LTTLE+EAS&Schedutil+Aligned Migration Thresholds)
+sdm865 (DynamlQ+Alignment with Modern Standards+No Migration Cost+OC Mode)
+sdm855/sdm855+ (DynamlQ+Alignment with Modern Standards+No Migration Cost+OC Mode)
+sdm845 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
+sdm765/sdm765g (DynamlQ+Alignment with Modern Standards+No Migration Cost+OC Mode)
+sdm730/sdm730g (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
+sdm710/sdm712 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
+sm6225 (sdm662/sdm680) (big.LTTLE+Aligned Migration Thresholds)
 - We do not support sdm685 because we could not find its SOCID; we only have the SOCIDs for sdm662 and sdm680
-sdm675 (DynamlQ+EAS&Schedutil+Alignment with Modern Standards+Aligned Migration Thresholds)
-sdm665 (big.LTTLE+EAS&Schedutil+Aligned Migration Thresholds)
+- Exclusive optimizations for the sdm680: +Alignment with Modern Standards+OC Mode+QTI Boost Framework Tuning
+sdm675 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
+sdm665 (big.LTTLE+Aligned Migration Thresholds)
 ```
 
 ## Requirements
@@ -101,16 +103,17 @@ sdm665 (big.LTTLE+EAS&Schedutil+Aligned Migration Thresholds)
 ### Switching on boot
 
 1. Open `/sdcard/Android/panel_powercfg.txt`
-2. Edit line `default_mode=balance`, where `balance` is the default mode applied at boot
-3. Reboot
+2. To change the energy profile, edit line `default_mode=balance`, where `balance` is the default mode applied at boot
+3. To change the OC mode, edit the line `default_oc=normal`, where `normal` is where you should change it, changing it to `under` to enable underclocking
+4. Reboot For the changes to apply at each boot, these will be the profiles applied at each boot
 
 ### Switching after boot
 
 Option 1:  
-Exec `sh /data/powercfg.sh balance`, where `balance` is the mode you want to switch.  
+Exec `sh /data/powercfg.sh balance` or exec `sh /data/powercfg.sh normal` , where `balance` or `normal` is the mode for the power profile and OC mode you want to switch
 
 Option 2:  
-Install [vtools](https://www.coolapk.com/apk/com.omarea.vtools) and bind APPs to power mode.  
+Install [vtools](https://www.coolapk.com/apk/com.omarea.vtools) and bind APPs to power mode. But it only works for power profiles, not OC mode
 
 ## Credit
 
