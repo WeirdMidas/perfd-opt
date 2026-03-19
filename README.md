@@ -4,7 +4,7 @@
 
 Perfd-opt is a specialized performance module designed to maximize user experience and energy efficiency on Snapdragon devices with multi-cluster architectures. By focusing exclusively on SoCs with a cluster hierarchy (Big.LITTLE and DynamIQ), the module targets the sophisticated task-migration and scheduling logic found in mid-to-high-end hardware. With the introduction of Energy Aware Scheduling (EAS) in devices released from 2018 onwards, we focused our implementation on the native integration offered by this generation of processors. This approach allows Perfd-opt to optimize task scheduling and placement based on energy efficiency. By improving the cost-benefit model of each SoC's EAS, Perfd-opt reduces hesitation and inaccuracies in decision-making. The result is faster task allocation, minimizing cache locality loss (L1/L2) and ensuring extremely efficient process migrations.
 
-Unlike projects that rely solely on governor simulations, perfd-opt applies direct, architecture-aware adjustments to Qualcomm’s QTI Boost Framework and core sysfs parameters. It is engineered to distinguish between efficiency and performance clusters, ensuring that high-demand tasks are instantly routed to "Big" cores while background activity remains on "Little" cores to save power.
+Unlike projects that rely solely on governor simulations, perfd-opt applies direct, architecture-aware adjustments to Qualcomm’s QTI Boost Framework and core sysfs parameters. When launching APPs or scrolling the screen, applying more aggressive parameters to improve response at an acceptable power penalty. When there is no interaction, use conservative parameters, use small core clusters as much as possible, and run at a higher energy efficiency OPP under heavy load.  
 
 For Snapdragon models with inefficient power–frequency curves (common in certain 8xx series SoCs), the module also introduces optimized DVFS limits, refining minimum and maximum frequencies to reduce waste and improve efficiency by up to ~40% in specific workloads without sacrificing responsiveness.
 
@@ -57,16 +57,42 @@ Miscellaneous Optimizations:
 
 Supported SoCs:
 sdm865 (DynamlQ+Alignment with Modern Standards+No Migration Cost+OC Mode)
+- under:   max 1.8+1.6+2.4g, min 0.7+0.7+1.1
+- normal:  max 1.8+2.0+2.6g, min 0.7+0.7+1.1
+
 sdm855/sdm855+ (DynamlQ+Alignment with Modern Standards+No Migration Cost+OC Mode)
+- under:   max 1.7+1.6+2.4g, min 0.5+0.8
+- normal:  max 1.7+2.0+2.6g, min 0.5+0.8
+
 sdm845 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
+- under:   max 1.7+2.0g, min 0.5+0.8
+- normal:  max 1.7+2.4g, min 0.5+0.8
+
 sdm765/sdm765g (DynamlQ+Alignment with Modern Standards+No Migration Cost+OC Mode)
+- under:   max 1.8+1.7+2.0g, min 0.5+0.6+0.6
+- normal:  max 1.8+2.0+2.2g, min 0.5+0.6+0.6
+
 sdm730/sdm730g (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
-sdm710/sdm712 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
-sm6225 (sdm662/sdm680) (big.LTTLE+Aligned Migration Thresholds)
-- We do not support sdm685 because we could not find its SOCID; we only have the SOCIDs for sdm662 and sdm680
-- Exclusive optimizations for the sdm680: +Alignment with Modern Standards+OC Mode+QTI Boost Framework Tuning
+- under:   max 1.7+1.9g, min 0.5+0.6
+- normal:  max 1.8+2.2g, min 0.5+0.6
+
+sdm710/sdm712 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode) 
+- under:   max 1.7+2.0g, min 0.5+0.6
+- normal:  max 1.7+2.2g, min 0.5+0.6
+
+sdm680 (big.LTTLE+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode+QTI Boost Framework Tuning)
+- under:   max 1.9+2.2g, min 0.6+0.8
+- normal:  max 1.8+2.4g, min 0.6+0.8
+
 sdm675 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
+- under:   max 1.7+1.7g, min 0.5+0.6
+- normal:  max 1.8+2.0g, min 0.5+0.6
+
+sdm662 (big.LTTLE+Aligned Migration Thresholds)
+- No change to the maximum and minimum CPU clock speeds
+
 sdm665 (big.LTTLE+Aligned Migration Thresholds)
+- No change to the maximum and minimum CPU clock speeds
 ```
 
 ## Requirements
