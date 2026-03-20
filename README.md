@@ -23,10 +23,11 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **OC Mode (Underclock and Overclock)**: Maximum clock modes for the Big/Prime Cluster defined by perfd, allowing you to choose between:
   - **normal**: Clock speed that delivers performance and efficiency within the expected range.
   - **under**: Reduced clock speed that reduces total power consumption, with a slight impact on UX.
-- **Miscellaneous and Secondary Optimizations**: Such as improvements to the SOC's thermal behavior, to maintain the SOC temperature between 38-48 degrees even in hot places, and other optimizations such as the addition of frame pacing, Triple Buffer for weak Adreno GPUs, and other optimizations that help make the SOC more predictable and efficient.
 - **Compatibility between full Snapdragon WALT (which comes with a directory) and generic WALT (which comes without a directory)**: We have also implemented optimizations that extract the maximum from these two Qualcomm device scenarios, allowing each device to achieve its efficiency and performance according to the availability of parameters to optimize, enabling all SOCs to be adapted to ALMOST ANY SCENARIO.
+- **Compatible with both Uclamp and Schedtune**: Optimizations to the boost mechanism are applicable to both, allowing users of newer and older kernels to benefit from task boosting with their respective mechanisms.
 - **Maintains the use of Governor Walt if it exists**: If the Snapdragon comes with Governor Walt, it is maintained to have a governor capable of meeting the needs of user UX fluidity, where it comes with optimizations that filter unnecessary peaks, reducing the energy consumption of this somewhat "power-hungry" governor in a slight way.
 - **Recommended to use the device's maximum screen refresh rate**: The way the device switches between refresh rates has been optimized, allowing you to take advantage of the device's maximum refresh rate without incurring as many energy efficiency penalties, since the idle transition is much more efficient and faster.
+- **Miscellaneous and Secondary Optimizations**: Such as improvements to the SOC's thermal behavior, to maintain the SOC temperature between 38-48 degrees even in hot places, and other optimizations such as the addition of frame pacing, Triple Buffer for weak Adreno GPUs, and other optimizations that help make the SOC more predictable and efficient.
 
 ## Profiles
 
@@ -43,10 +44,8 @@ Architectures and Topologies:
 - **DynamlQ**: These are processors with a modern structure and good L3 cache, featuring optimizations that improve migration and the scheduler's ability to decide the best core for a specific task.
 
 Scheduling Methods:
-- **Alignment with Modern Standards**: Implement energy efficiency optimizations such as big cluster min clocks being between 600-800. These implementations are intended to make the EAS of the aforementioned SOCs closer to the EAS of recent SOCs designed for efficiency.
-- **Input Boost Disabling**: If the SOC proves to be optimized enough for the user to trust their optimized EAS scheduler and qti boost, input boost is disabled. This allows schedutil to precisely define the necessary frequencies for each interaction and uses qti boost to boost during moments of hesitation. Each SOC with this optimization demonstrates that the user can trust their EAS scheduler and qti boost to handle all cases with maximum efficiency and without voltage spikes.
-- **Aligned Migration Thresholds**: For SOCs that have only two clusters and need to make ideal decisions about what to keep on the little cores and send to the big cores, filtering tasks that can be resolved on the small cores while maintaining margin for processing peaks, avoiding underutilizing the little cores and making them spend more energy when the big cores could resolve them more efficiently and at an average frequency.
-- **No Migration Cost**: If the SOC has an efficient architecture, we can afford to have no migration cost and allow the EAS to make decisions about which tasks to assign to the cores based solely on energy costs.
+- **Alignment with Modern Standards**: Implement modern EAS optimizations on older devices that would benefit from them, such as EAS optimizations that reduce the minimum clock speed of the big/prime/little cluster frequencies to below 1GHz, to keep them at an efficient frequency floor. In addition to other optimizations, such as efficient migration that respects the characteristics of the SOC and others.
+- **Input Boost Disabling**: If the SOC can rely on its scheduler and QTI Boost Framework, the input boost is disabled to give full control to the scheduler and the boost mechanism.
 - **OC Mode**: Ability to choose between normal and reduced maximum clock speed, to save power or allow for better raw performance.
 
 Miscellaneous Optimizations:
@@ -56,42 +55,42 @@ Miscellaneous Optimizations:
 - **Frame Pacing**: A vendor extension used to improve stability and GPU usage in frame rendering by better synchronizing with screen timers.
 
 Supported SoCs:
-sdm865 (DynamlQ+Alignment with Modern Standards+No Migration Cost+OC Mode)
-- under:   max 1.8+1.6+2.4g, min 0.7+0.7+1.1
-- normal:  max 1.8+2.0+2.6g, min 0.7+0.7+1.1
+sdm865 (DynamlQ+Alignment with Modern Standards+OC Mode)
+- under:   max 1.8+2.0+2.6g, min 0.7+0.7+1.1g
+- normal:  max 1.8+2.4+2.8g, min 0.7+0.7+1.1g
 
-sdm855/sdm855+ (DynamlQ+Alignment with Modern Standards+No Migration Cost+OC Mode)
-- under:   max 1.7+1.6+2.4g, min 0.5+0.8
-- normal:  max 1.7+2.0+2.6g, min 0.5+0.8
+sdm855/sdm855+ (DynamlQ+Alignment with Modern Standards+OC Mode)
+- under:   max 1.7+2.0+2.6g, min 0.5+0.8g
+- normal:  max 1.7+2.4+2.8g, min 0.5+0.8g
 
-sdm845 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
-- under:   max 1.7+2.0g, min 0.5+0.8
-- normal:  max 1.7+2.4g, min 0.5+0.8
+sdm845 (DynamlQ+Alignment with Modern Standards+OC Mode)
+- under:   max 1.7+2.4g, min 0.5+0.8g
+- normal:  max 1.7+2.8g, min 0.5+0.8g
 
-sdm765/sdm765g (DynamlQ+Alignment with Modern Standards+No Migration Cost+OC Mode)
-- under:   max 1.8+1.7+2.0g, min 0.5+0.6+0.6
-- normal:  max 1.8+2.0+2.2g, min 0.5+0.6+0.6
+sdm765/sdm765g (DynamlQ+Alignment with Modern Standards+OC Mode)
+- under:   max 1.8+2.0+2.2g, min 0.5+0.6+0.6g
+- normal:  max 1.8+2.2+2.3g, min 0.5+0.6+0.6g
 
-sdm730/sdm730g (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
-- under:   max 1.7+1.9g, min 0.5+0.6
-- normal:  max 1.8+2.2g, min 0.5+0.6
+sdm730/sdm730g (DynamlQ+Alignment with Modern Standards+OC Mode)
+- under:   max 1.7+1.9g, min 0.5+0.6g
+- normal:  max 1.8+2.2g, min 0.5+0.6g
 
-sdm710/sdm712 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode) 
-- under:   max 1.7+2.0g, min 0.5+0.6
-- normal:  max 1.7+2.2g, min 0.5+0.6
+sdm710/sdm712 (DynamlQ+Alignment with Modern Standards+OC Mode) 
+- under:   max 1.7+2.0g, min 0.5+0.6g
+- normal:  max 1.7+2.2g, min 0.5+0.6g
 
-sdm680 (big.LTTLE+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode+QTI Boost Framework Tuning)
-- under:   max 1.9+2.2g, min 0.6+0.8
-- normal:  max 1.8+2.4g, min 0.6+0.8
+sdm680 (big.LTTLE+Alignment with Modern Standards+OC Mode+QTI Boost Framework Tuning)
+- under:   max 1.9+2.2g, min 0.6+0.8g
+- normal:  max 1.8+2.4g, min 0.6+0.8g
 
-sdm675 (DynamlQ+Alignment with Modern Standards+Aligned Migration Thresholds+OC Mode)
-- under:   max 1.7+1.7g, min 0.5+0.6
-- normal:  max 1.8+2.0g, min 0.5+0.6
+sdm675 (DynamlQ+Alignment with Modern Standards+OC Mode)
+- under:   max 1.7+1.7g, min 0.5+0.6g
+- normal:  max 1.8+2.0g, min 0.5+0.6g
 
-sdm662 (big.LTTLE+Aligned Migration Thresholds)
+sdm662 (big.LTTLE)
 - No change to the maximum and minimum CPU clock speeds
 
-sdm665 (big.LTTLE+Aligned Migration Thresholds)
+sdm665 (big.LTTLE)
 - No change to the maximum and minimum CPU clock speeds
 ```
 
