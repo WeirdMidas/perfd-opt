@@ -6,13 +6,14 @@
 
 The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), automatically adjust the `interactive` parameters via simulation and heuristic optimization algorithms, and working on all mainstream devices which use `interactive` as default governor. The recent [WIPE v2](https://github.com/yc9559/wipe-v2), improved simulation supports more features of the kernel and focuses on rendering performance requirements, automatically adjusting the `interactive`+`HMP`+`input boost` parameters. However, after the EAS is merged into the mainline, the simulation difficulty of auto-tuning depends on raise. It is difficult to simulate the logic of the EAS scheduler. In addition, EAS is designed to avoid parameterization at the beginning of design, so for example, the adjustment of schedutil has no obvious effect.  
 
-[WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further for devices with HMP. However, with perfd-opt, we are looking for a different approach, which mainly involves: When launching APPs or scrolling the screen, applying more aggressive parameters to improve response at an acceptable power penalty. When there is no interaction, use conservative parameters, use small core clusters as much as possible, and run at a higher energy efficiency OPP under heavy load.  
+[WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further for devices with HMP. However, with perfd-opt, we are looking for a different approach, which mainly involves: When launching APPs or scrolling the screen, applying more aggressive parameters and run at a higher energy efficiency OPP under heavy load to improve response at an acceptable power penalty. When there is no interaction or the load drops suddenly, which is common in UI tasks, wait a bit before lowering the CPU frequencies. Once you confirm that the load has decreased, use conservative parameters and package tasks onto the LITTLE cores.
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
 ## Features
 - **Specific optimizations**: for Snapdragon SOCs and those using the EAS Scheduler
 - **Automatic Hardware Detection**: Detects CPU architecture (4+4, 4+3+1, 6+2, 6+1+1), GPU type, and UFS availability
+- **Implementation of the `roll-to-idle` strategy:** Instead of immediately going down, wait a bit, a form of rice-to-idle adapted for the Android environment, which is known for frequent bursts
 - **Power modes:**
   - **`powersave`**: Designed for basic use such as using WhatsApp or messaging apps
   - **`balance`**: Ideal for everyday use, offering a near-perfect balance between performance and efficiency
@@ -85,7 +86,7 @@ Install [vtools](https://www.coolapk.com/apk/com.omarea.vtools) and bind APPs to
 
 ```plain
 @Matt Yang
-I am the original creator of the "perfd-opt" module; I am simply forking it
+He is the real creator of the "perfd-opt" module; I am simply forking it
 
 @JUANIMAN
 Because it gave me inspiration to improve the perfd-opt README, basically our modules are "opposites" of each other
