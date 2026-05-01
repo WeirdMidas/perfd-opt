@@ -11,19 +11,22 @@ while the project [WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meetin
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
 ## Features
-- **Specific optimizations**: for Snapdragon SOCs and those using the EAS Scheduler
-- **Automatic Hardware Detection**: Detects CPU architecture (4+4, 4+3+1, 6+2, 6+1+1), GPU type, and UFS availability
-- **Implementation of the `rice-to-idle` strategy:** It ramps up immediately at an efficient frequency, and descends when the task is finished, eliminating residual consumption
-- **Power modes:**
-  - **`powersave`**: Designed for basic use such as using WhatsApp or messaging apps
-  - **`balance`**: Ideal for everyday use, offering a near-perfect balance between performance and efficiency
-  - **`performance`**: Maximum performance without restrictions, aims to make EAS core selection more "performance-oriented"
+
+- **Specific optimizations** for Snapdragon SOCs that have EAS Scheduler
+- **Automatic hardware detection** Detects CPU architecture (4+4, 6+2, 4+3+1, 6+1+1), GPU type, and UFS availability
+- **Implementation of "Rice-to-idle"** for better performance by finding the most efficient frequency to solve the task without demanding maximum from the SOC, and then: ramping down quickly without residual consumption
+- **Customizable profile configurations**: Edit profile settings via easy-to-understand `.txt` files
+- **Persistent configuration storage**:
+  - Profile configs: `/sdcard/Android/panel_powercfg.txt`
+- **Power modes**:
+  - **`powersave`**: Designed for basic use, such as using WhatsApp, etc
+  - **`balance`**: Ideal for general use, balancing performance with efficiency
+  - **`performance`**: It modifies the scheduler to be more performance-oriented, seeking total frame stability
   - **`fast`**: Stable performance and throughout depending on the device's TDP and chassis
-- **Compatibility between full WALT (which comes with a directory) and generic WALT (which comes without a directory)**: for internal improvements to the WALT tracker and EAS scheduler
-- **Compatible with both Uclamp and Schedtune**: for different forms of boosting and task placement, also including their "custom" versions, such as uclamp which comes with the "boosted" parameter
-- **Maintains the use of Governor WALT if it exists**: to stay synchronized with what WALT needs to govern on its devices
-- **Recommended to use the device's maximum screen refresh rate**: due to internal optimizations in the way apps automatically change the refresh rate to save energy
-- **Miscellaneous and Secondary Optimizations**: such as disabling PerfLock on devices that have the camera-daemon in schedtune or in uclamp, triple buffering for weak GPUs, and other additional improvements as required by the device
+- **Compatible with full and generic WALT** for better tuning between different Snapdragon generations
+- **Configured to use both Schedtune and Uclamp** for better task placement and boosting
+- **Improvements to the Display Refresh Rate** such as reduced power consumption and improved fluidity
+- **Miscellaneous Tunings** such as disabling Perflock for SOCs that have the Schedtune or Uclamp camera-daemon, in addition to other optimizations
 
 ## Supported SOCs at the moment
 
@@ -35,7 +38,7 @@ sdm765/sdm765g
 sdm730/sdm730g 
 sdm710/sdm712
 sdm685
-sdm680 
+sdm680
 sdm675 
 sdm662
 sdm665
@@ -50,7 +53,7 @@ sdm665
 ## Installation
 
 1. Download zip in [Release Page](https://github.com/yc9559/perfd-opt/releases)
-2. Flash it using your root solution (Magisk, KSU, or Apatch)
+2. Flash in Magisk manager
 3. Reboot
 4. Check whether `/sdcard/Android/panel_powercfg.txt` exists
 
@@ -58,7 +61,8 @@ sdm665
 
 ### Sources
 
-- Studies on how Google modifies and uses EAS, from basic to advanced.
+- Studies on how Google modifies and uses EAS, from basic to advanced
+- My own studies on the EAS scheduler and methods for selecting the best CPU core
 
 ### Suggestions for Complementary Modules
 
