@@ -6,7 +6,7 @@
 
 The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), automatically adjust the `interactive` parameters via simulation and heuristic optimization algorithms, and working on all mainstream devices which use `interactive` as default governor. The recent [WIPE v2](https://github.com/yc9559/wipe-v2), improved simulation supports more features of the kernel and focuses on rendering performance requirements, automatically adjusting the `interactive`+`HMP`+`input boost` parameters. However, after the EAS is merged into the mainline, the simulation difficulty of auto-tuning depends on raise. It is difficult to simulate the logic of the EAS scheduler. In addition, EAS is designed to avoid parameterization at the beginning of design, so for example, the adjustment of schedutil has no obvious effect
 
-while the project [WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further for devices with HMP. However, with perfd-opt, we are looking for a different approach, which mainly involves: When launching APPs or scrolling the screen, applying more aggressive parameters and run at a higher energy efficiency OPP under heavy load to improve response at an acceptable power penalty. When there is no interaction, use conservative parameters and package the tasks into LITTLE cores, and keep the display refresh rate as low as possible after entering idle mode, saving as much power as possible while the device is resting
+While the project [WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further for devices with HMP. However, with perfd-opt, we are looking for a different approach, which mainly involves: When launching APPs or scrolling the screen, applying more aggressive parameters and run at a higher energy efficiency OPP under heavy load to improve response at an acceptable power penalty. So when there's no interaction: use conservative parameters, use the LITTLE cores as much as possible, reduce the refresh rate to the minimum the SOC supports, and with that: we save as much energy as possible while the device is in standby, or even idle/suspended mode
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
@@ -42,6 +42,8 @@ sdm680
 sdm675 
 sdm662
 sdm665
+sdm660
+sdm652
 ```
 
 ## Requirements
@@ -57,7 +59,7 @@ sdm665
 3. Reboot
 4. Check whether `/sdcard/Android/panel_powercfg.txt` exists
 
-## References
+## Documentation and Reference Guide
 
 ### Sources
 
@@ -67,6 +69,18 @@ sdm665
 ### Suggestions for Complementary Modules
 
 - [AsoulOpt](https://github.com/nakixii/Magisk_AsoulOpt@) — A module that improves EAS decision-making regarding AAA game threads or games listed in the repository, allowing EAS to prioritize game threads on large cores, thus improving predictability and stability. It includes up to three migration modes that the user can choose, enabling EAS to better determine the performance and placement of game threads.
+
+### How to suggest SOCs to add to the compatibility list
+
+Submit an issue with these questions answered:
+
+1. Name of your SOC platform (can be viewed via: `getprop ro.board.platform`)
+
+2. Does your SOC use Schedtune, Uclamp, or both?
+
+3. List the available frequencies of your SOC, for all its clusters if possible.
+
+4. Does your SOC use EAS? (If the answer is not "yes", your issue will be automatically ignored)
 
 ## Switch modes
 
