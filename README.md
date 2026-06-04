@@ -12,10 +12,10 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 
 ## Features
 
-- **Specific optimizations** for Snapdragon SOCs that have EAS Scheduler
-- **Automatic hardware detection** Detects CPU architecture (4+4, 6+2, 4+3+1, 6+1+1), GPU type, and UFS availability
-- **Implementation of "Rice-to-idle"** for better performance by finding the most efficient frequency to solve the task without demanding maximum from the SOC, and then: ramping down quickly without residual consumption
-- **Customizable profile configurations**: Edit profile settings via easy-to-understand `.txt` files
+- **Specific optimizations** - for Snapdragon SOCs that have EAS Scheduler
+- **Automatic hardware detection** - Detects CPU architecture (4+4, 6+2, 4+3+1, 6+1+1), GPU type, and UFS availability
+- **Implementation of "Rice-to-idle"** - for better performance by finding the most efficient frequency to solve the task without demanding maximum from the SOC, and then: ramping down quickly without residual consumption
+- **Customizable profile configurations** - Edit profile settings via easy-to-understand `.txt` files
 - **Persistent configuration storage**:
   - Profile configs: `/sdcard/Android/panel_powercfg.txt`
 - **Power modes**:
@@ -23,10 +23,11 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
   - **`balance`**: Ideal for general use, balancing performance with efficiency
   - **`performance`**: It modifies the scheduler to be more performance-oriented, seeking total frame stability
   - **`fast`**: Stable performance and throughout depending on the device's TDP and chassis
-- **Compatible with full and generic WALT** for better tuning between different Snapdragon generations
-- **Configured to use both Schedtune and Uclamp** for better task placement and boosting
-- **Improvements to the Display Refresh Rate** such as reduced power consumption and improved fluidity
-- **Miscellaneous Tunings** such as disabling Perflock for SOCs that have the Schedtune or Uclamp camera-daemon, in addition to other optimizations
+- **QTI Boost Framework Tuning** - improvements to the Qualcomm Boost Framework, including enhancements to app loading speed, animations, and more. To find out if your SOC has this feature, check if it has the word "Boosted" in front of it in the list of compatible SOCs
+- **Compatible with full and generic WALT** - for better tuning between different Snapdragon generations
+- **Configured to use both Schedtune and Uclamp** - for better task placement and boosting
+- **Improvements to the Display Refresh Rate** - such as reduced power consumption and improved fluidity
+- **Miscellaneous Tunings** - such as disabling Perflock for SOCs that have the Schedtune or Uclamp camera-daemon, in addition to other optimizations
 
 ## Supported SOCs at the moment
 
@@ -38,7 +39,7 @@ sdm765/sdm765g
 sdm730/sdm730g 
 sdm710/sdm712
 sdm685
-sdm680
+sdm680 - Boosted
 sdm675 
 sdm662
 sdm665
@@ -48,7 +49,7 @@ sdm652
 
 ## Requirements
 
-- Devices with Snapdragon processors that use EAS
+- Devices with Snapdragon SOC that have the EAS Scheduler
 - Android 8.0 or higher
 - Magisk, MAYBE other Root Managers are compatible, but it's not guaranteed
 
