@@ -6,15 +6,15 @@
 
 The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), automatically adjust the `interactive` parameters via simulation and heuristic optimization algorithms, and working on all mainstream devices which use `interactive` as default governor. The recent [WIPE v2](https://github.com/yc9559/wipe-v2), improved simulation supports more features of the kernel and focuses on rendering performance requirements, automatically adjusting the `interactive`+`HMP`+`input boost` parameters. However, after the EAS is merged into the mainline, the simulation difficulty of auto-tuning depends on raise. It is difficult to simulate the logic of the EAS scheduler. In addition, EAS is designed to avoid parameterization at the beginning of design, so for example, the adjustment of schedutil has no obvious effect
 
-While the project [WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further for devices with HMP. However, with perfd-opt, we are looking for a different approach, which mainly involves: When launching APPs or scrolling the screen, applying more aggressive parameters and run at a higher energy efficiency OPP under heavy load to improve response at an acceptable power penalty. So when there's no interaction: use conservative parameters, use the LITTLE cores as much as possible, reduce the refresh rate to the minimum the SOC supports, and with that: we save as much energy as possible while the device is in standby, or even idle/suspended mode
+While the project [WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further for devices with HMP. However, with perfd-opt, we are looking for a different approach, which mainly involves: When launching APPs or scrolling the screen, applying more aggressive parameters and run at a higher energy efficiency OPP under heavy load to improve response at an acceptable power penalty. So when there's no interaction: use conservative parameters, if tasks still end up on the big/prime cores, disable all hysteresis to immediately return the task to the LITTLE cores when it finishes, reduce the refresh rate to the minimum the SOC supports, and with that: we save as much energy as possible while the device is in standby, or even idle/suspended mode
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
 ## Features
 
-- **Specific optimizations** - for Snapdragon SOCs that have EAS Scheduler
+- **Specific optimizations** - for Snapdragon SOCs that have EAS Scheduler and WALT Tracker
 - **Automatic hardware detection** - Detects CPU architecture (4+4, 6+2, 4+3+1, 6+1+1), GPU type, and UFS availability
-- **Implementation of "Rice-to-idle"** - for better performance by finding the most efficient frequency to solve the task without demanding maximum from the SOC, and then: ramping down quickly without residual consumption
+- **Implementation of `Rice-to-idle`** - for better performance by finding the most efficient frequency to solve the task without demanding maximum from the SOC, and then: ramping down quickly without residual consumption
 - **Customizable profile configurations** - Edit profile settings via easy-to-understand `.txt` files
 - **Persistent configuration storage**:
   - Profile configs: `/sdcard/Android/panel_powercfg.txt`
@@ -23,9 +23,10 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
   - **`balance`**: Smoother than the stock config with lower power consumption
   - **`performance`**: It modifies the scheduler to be more performance-oriented, seeking total frame stability
   - **`fast`**: Providing stable performance capacity considering the TDP limitation of device chassis
-- **Structural Improvements to the EAS Scheduler** - Improvements such as cache locality, decision-making regarding the best core, and reduction of unnecessary boosting in Big/Prime cores
+- **Structural Improvements to the EAS Scheduler** - Optimizing core selection based on hot cache, keeping the load on smaller cores and reducing unnecessary boosting of high-performance cores without requiring extremely conservative migration margins
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations
-- **Boost Framework Configuration Tuning** - Optimizations and improvements to the QTI Boost Framework in the SOC, for the purpose of improving fluidity and scheduling for certain situations. To find out if your SOC has this feature, check if the word "- Boosted" is in the list of compatible SOCs
+- **Tuning the SOC QTI Framework** - Such as: Optimizations in the SOC Boost Framework for scheduler fluidity and predictability, additions to `display_boot` in order to reduce the deficiencies of each SOC individually, and other improvements in other areas. To find out if your SOC has this feature, check if the word "- Boosted" is in the list of compatible SOCs
+- **GPU Cache Improvements** - In order to reduce micro stutters during demanding GPU usage such as gaming, video rendering, camera use, etc., improving GPU utilization to have more headroom for these tasks
 - **Configured to use both Schedtune and Uclamp** - To improve placement and boosting of tasks, such as gaming in performance profiles
 - **Improvements to the Display Refresh Rate** - To reduce power consumption and improve SOC fluidity, allowing the user to utilize the SOC's higher refresh rate
 - **Miscellaneous Tunings** - Such as disabling Perflock for SOCs that have the Schedtune or Uclamp camera-daemon and other optimizations that reduce SOC deficiencies
@@ -74,6 +75,11 @@ sdm652
 ### Suggestions for Complementary Modules
 
 - [AsoulOpt](https://github.com/nakixii/Magisk_AsoulOpt@) — A module that improves EAS decision-making regarding AAA game threads or games listed in the repository, allowing EAS to prioritize game threads on large cores, thus improving predictability and stability. It includes up to three migration modes that the user can choose, enabling EAS to better determine the performance and placement of game threads.
+
+### Usage suggestions for users to get the most out of perfd ​​opt
+
+1. Use the highest refresh rate your display has to allow for maximum fluidity that perfd ​​opt's rice-to-idle can deliver.
+2. Switch to the performance profile only if you want a little more FPS in games; the balanced profile already handles most games nowadays that don't demand much from the CPU. Switch to the fast profile ONLY in extreme/demanding tasks, benchmarks, or games that your CPU can't handle running at 20 FPS; outside of these situations, using the fast profile is not recommended.
 
 ### How to suggest SOCs to add to the compatibility list
 
