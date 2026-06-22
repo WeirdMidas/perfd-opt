@@ -26,7 +26,6 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Structural Improvements to the EAS Scheduler** - Optimizing core selection based on hot cache, keeping the load on smaller cores and reducing unnecessary boosting of high-performance cores without requiring extremely conservative migration margins
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations
 - **Tuning the SOC QTI Framework** - Such as: Optimizations in the SOC Boost Framework for scheduler fluidity and predictability, additions to `display_boot` in order to reduce the deficiencies of each SOC individually, and other improvements in other areas. To find out if your SOC has this feature, check if the word "- Boosted" is in the list of compatible SOCs
-- **GPU Cache Improvements** - In order to reduce micro stutters during demanding GPU usage such as gaming, video rendering, camera use, etc., improving GPU utilization to have more headroom for these tasks
 - **Configured to use both Schedtune and Uclamp** - To improve placement and boosting of tasks, such as gaming in performance profiles
 - **Improvements to the Display Refresh Rate** - To reduce power consumption and improve SOC fluidity, allowing the user to utilize the SOC's higher refresh rate
 - **Miscellaneous Tunings** - Such as disabling Perflock for SOCs that have the Schedtune or Uclamp camera-daemon and other optimizations that reduce SOC deficiencies
@@ -43,7 +42,7 @@ sdm710/sdm712
 sdm685
 sdm680 - Boosted
 sdm675 
-sdm662
+sdm662 - Boosted
 sdm665
 sdm660
 sdm652
