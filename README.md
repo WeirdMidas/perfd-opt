@@ -26,6 +26,7 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Structural Improvements to the EAS Scheduler** - Optimizing core selection based on hot cache, keeping the load on smaller cores and reducing unnecessary boosting of high-performance cores without requiring extremely conservative migration margins
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations
 - **Tuning the SOC QTI Framework** - Such as: Optimizations in the SOC Boost Framework for scheduler fluidity and predictability, additions to `display_boot` in order to reduce the deficiencies of each SOC individually, and other improvements in other areas. To find out if your SOC has this feature, check if the word "- Boosted" is in the list of compatible SOCs
+  - **Improve Adreno GPU behavior by mimicking certain gimmicks** - Through the QTI Boost Framework, we make the SOC capable of simulating Adreno input boost, Adreno Idler, Adreno Boost, and other mechanisms that efficiently improve the Adreno GPU without needing these kernel mechanisms, allowing stock ROMs/kernels to benefit from such mechanisms in user space
 - **Configured to use both Schedtune and Uclamp** - To improve placement and boosting of tasks, such as gaming in performance profiles
 - **Improvements to the Display Refresh Rate** - To reduce power consumption and improve SOC fluidity, allowing the user to utilize the SOC's higher refresh rate
 - **Miscellaneous Tunings** - Such as disabling Perflock for SOCs that have the Schedtune or Uclamp camera-daemon and other optimizations that reduce SOC deficiencies
@@ -37,11 +38,11 @@ sdm865
 sdm855/sdm855+
 sdm845
 sdm765/sdm765g
-sdm730/sdm730g 
+sdm730/sdm730g - Boosted
 sdm710/sdm712
 sdm685
 sdm680 - Boosted
-sdm675 
+sdm675 - Boosted
 sdm662 - Boosted
 sdm665
 sdm660
@@ -109,6 +110,10 @@ Exec `sh /data/powercfg.sh balance`, where `balance` is the mode you want to swi
 
 Option 2:  
 Install [vtools](https://www.coolapk.com/apk/com.omarea.vtools) and bind APPs to power mode
+
+### The reason for the project's delayed release
+
+- I'm having a lot of problems in my life, like breaking up with my boyfriend, starting to suffer from motivation issues, etc. Besides that, I'm absolutely obsessed with making this project as good as possible for everyone to use. Also, I'm trying to have at least 7 SOCs with the optimized Boost Framework, because I planned to add more SOCs (at least three) with the optimized Boost Framework as I updated the module, and finding the Boost Framework for certain SOCs is incredibly difficult. So, that's the reason for the delay in the release, I hope you understand.
 
 ## Credit
 
