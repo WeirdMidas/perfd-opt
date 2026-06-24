@@ -19,14 +19,14 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Persistent configuration storage**:
   - Profile configs: `/sdcard/Android/panel_powercfg.txt`
 - **Power modes**:
-  - **`powersave`**: Designed for basic use, such as using WhatsApp, etc
-  - **`balance`**: Smoother than the stock config with lower power consumption
+  - **`powersave`**: Designed for basic tasks like messaging and calls, this profile uniquely filters out some frequency spikes
+  - **`balance`**: Ideal for most users, with lower power consumption than the stock config
   - **`performance`**: It modifies the scheduler to be more performance-oriented, seeking total frame stability
   - **`fast`**: Providing stable performance capacity considering the TDP limitation of device chassis
 - **Structural Improvements to the EAS Scheduler** - Optimizing core selection based on hot cache, keeping the load on smaller cores and reducing unnecessary boosting of high-performance cores without requiring extremely conservative migration margins
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations
 - **Tuning the SOC QTI Framework** - Such as: Optimizations in the SOC Boost Framework for scheduler fluidity and predictability, additions to `display_boot` in order to reduce the deficiencies of each SOC individually, and other improvements in other areas. To find out if your SOC has this feature, check if the word "- Boosted" is in the list of compatible SOCs
-  - **Improve Adreno GPU behavior by mimicking certain gimmicks** - Through the QTI Boost Framework, we make the SOC capable of simulating Adreno input boost, Adreno Idler, Adreno Boost, and other mechanisms that efficiently improve the Adreno GPU without needing these kernel mechanisms, allowing stock ROMs/kernels to benefit from such mechanisms in user space
+  - **Cold & Snappy** - If the SOC has achieved **perfect** optimization between Scheduler and Boost Framework, input boost is completely disabled, reducing power consumption during light use and basic typing, maximizing the project's rice-to-idle strategy. To check if your SOC has this level of tuning, see if it has the words "- Cold & Snappy" next to "-Boosted"
 - **Configured to use both Schedtune and Uclamp** - To improve placement and boosting of tasks, such as gaming in performance profiles
 - **Improvements to the Display Refresh Rate** - To reduce power consumption and improve SOC fluidity, allowing the user to utilize the SOC's higher refresh rate
 - **Miscellaneous Tunings** - Such as disabling Perflock for SOCs that have the Schedtune or Uclamp camera-daemon and other optimizations that reduce SOC deficiencies
@@ -44,9 +44,10 @@ sdm685
 sdm680 - Boosted
 sdm675 - Boosted
 sdm662 - Boosted
-sdm665
+sdm665 - Boosted
 sdm660
 sdm652
+sdm636
 ```
 
 ## Requirements
@@ -54,7 +55,7 @@ sdm652
 - Devices with Snapdragon SOC that have the EAS Scheduler
 - Snapdragon device that is using WALT as a tracker instead of PELT
 - Android 8.0 or higher
-- A non-unstable ROM or custom kernel
+- A non-unstable ROM or custom kernel and recommended for Stock Kernels
 - Magisk, MAYBE other Root Managers are compatible, but it's not guaranteed
 - Have busybox installed (Optional)
 
@@ -94,6 +95,15 @@ Submit an issue with these questions answered:
 4. List the available frequencies of your SOC, for all its clusters if possible.
 
 5. Does your SOC use EAS? (If the answer is not "yes", your issue will be automatically ignored)
+
+### In cases where your GPU cannot handle FHD+
+
+- Change your screen resolution to HD+ using these commands:
+```bash
+wm size 720x1600
+stop surfaceflinger && start surfaceflinger
+```
+- This will give your GPU a fillrate reduction of up to 55%, allowing for a good margin for your hardware. Only do this if your GPU cannot handle FHD+ resolution at high refresh rates (90Hz-144Hz) and you don't mind the loss of visual quality.
 
 ## Switch modes
 
