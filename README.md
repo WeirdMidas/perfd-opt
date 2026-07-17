@@ -23,20 +23,20 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
   - **`balance`**: Ideal for most users, with lower power consumption than the stock config
   - **`performance`**: It modifies the scheduler to be more performance-oriented, seeking total frame stability
   - **`fast`**: Providing stable performance capacity considering the TDP limitation of device chassis
-- **Structural Tunings in the EAS Scheduler** - Optimize EAS to improve cache locality in background tasks, use idle cores for user processes, and avoid unnecessary frequency boosts on high-performance cores, allowing low-power cores to absorb more load without stiffening migration margins
+- **Structural Tunings in the EAS Scheduler** - Optimize the EAS to improve decisions about the best core for each task, while reducing the need for unnecessary boosts of high-performance cores, without requiring conservative migration margins
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations, allowing certain WALT parameters to be adapted according to the generation and needs of the SOC
 - **Tuning the QTI Boost Framework** - Such as: Optimizations in the Qualcomm Boost Framework to improve scheduler response for situations that demand immediate performance. To find out if your SOC has this feature, check if the word "- Boosted" is in the list of compatible SOCs
 - **Configured to use both Schedtune and Uclamp** - To improve task placement and use of higher frequencies, such as in demanding games or tasks that require high CPU capacity
-- **Improvements to the Display Refresh Rate** - To reduce the SOC's power consumption during high refresh rate activity, allowing the display to idle during micro-interactions, thus making higher refresh rates more usable
-- **Miscellaneous Tunings** - For example: disabling camera perflock for SOCs that have the Uclamp or Schedtune camera-daemon directory
+- **Improvements to the Display Refresh Rate** - To improve how the display driver manages display refresh rates, there's also an "- Advanced Display" option where optimizations are more aggressive, though dependent on the SOC
+- **Miscellaneous Tunings** - For example: disabling camera perflock for SOCs that have the Uclamp or Schedtune camera-daemon directory, allowing the EAS + WALT Tracker to efficiently manage the camera's processing needs
 
 ## Supported SOCs at the moment
 
 ```plain
-sdm865
-sdm855/sdm855+
+sdm865 - Advanced Display
+sdm855/sdm855+ - Advanced Display
 sdm845
-sdm765/sdm765g
+sdm765/sdm765g - Advanced Display
 sdm730/sdm730g - Boosted
 sdm710/sdm712
 sdm685
