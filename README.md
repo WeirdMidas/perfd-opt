@@ -24,6 +24,7 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
   - **`performance`**: It modifies the scheduler to be more performance-oriented, seeking total frame stability
   - **`fast`**: Providing stable performance capacity considering the TDP limitation of device chassis
 - **Structural Tunings in the EAS Scheduler** - Optimize the EAS to improve decisions about the best core for each task, while reducing the need for unnecessary boosts of high-performance cores, without requiring conservative migration margins
+  - **Identify the SOCs as "filtered", "semi-filtered", and "unfiltered"** — We can filter the SOCs into three types: those that will use the Qualcomm task filters, those that will use few filters, and those that will use no filters. Based on this, we respect the needs of the high-performance cores of these SOCs
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations, allowing certain WALT parameters to be adapted according to the generation and needs of the SOC
 - **Tuning the QTI Boost Framework** - Such as: Optimizations in the Qualcomm Boost Framework to improve scheduler response for situations that demand immediate performance. To find out if your SOC has this feature, check if the word "- Boosted" is in the list of compatible SOCs
 - **Configured to use both Schedtune and Uclamp** - To improve task placement and use of higher frequencies, such as in demanding games or tasks that require high CPU capacity
@@ -33,20 +34,20 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 ## Supported SOCs at the moment
 
 ```plain
-sdm865 - Advanced Display
-sdm855/sdm855+ - Advanced Display
-sdm845
-sdm765/sdm765g - Advanced Display
-sdm730/sdm730g - Boosted
-sdm710/sdm712
-sdm685
-sdm680 - Boosted
-sdm675 - Boosted
-sdm662 - Boosted
-sdm665 - Boosted
-sdm660
-sdm652
-sdm636
+sdm865 - Advanced Display - Filtered
+sdm855/sdm855+ - Advanced Display - Filtered
+sdm845 - Semi-Filtered
+sdm765/sdm765g - Advanced Display - Filtered
+sdm730/sdm730g - Boosted - Semi-Filtered
+sdm710/sdm712 - Semi-Filtered
+sdm685 - Unfiltered
+sdm680 - Boosted - Unfiltered
+sdm675 - Boosted - Semi-Filtered
+sdm662 - Boosted - Unfiltered
+sdm665 - Boosted - Unfiltered
+sdm660 - Unfiltered
+sdm652 - Unfiltered
+sdm636 - Unfiltered
 ```
 
 ## Requirements
