@@ -26,9 +26,9 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Structural Tunings in the EAS Scheduler** - Optimize the EAS to improve decisions about the best core for each task, while reducing the need for unnecessary boosts of high-performance cores, without requiring conservative migration margins
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations, allowing certain WALT parameters to be adapted according to the generation and needs of the SOC
 - **Tuning the QTI Boost Framework** - For example: Improving the scheduler's response to various performance demands. However, this optimization is selective, meaning that SOCs with the "-Boosted" prefix will have this feature
+- **Enhanced Thermal Margin** - In some SOCs, they will have their thermal margin enhanced, in order to improve efficiency under heavy load and take full advantage of efficient silicon. SOCs that have this will have the prefix "- Margin"
 - **Configured to use both Schedtune and Uclamp** - To improve task placement and use of higher frequencies, such as in demanding games or tasks that require high CPU capacity
 - **Improvements to the Display Refresh Rate** - Improve display behavior and refresh rates (90Hz+) to make the device smarter and more efficient in handling on-screen content
-- **Ultra Low Idle Power Consumption** - Optimize how the SOC enters idle states with the screen off and try to keep the device with the lowest possible power consumption while idle
 - **Miscellaneous Tunings** - For example: disabling camera perflock for SOCs that have the Uclamp or Schedtune camera-daemon directory, allowing the EAS + WALT Tracker to efficiently manage the camera's processing needs
 
 ## Supported SOCs at the moment
@@ -40,8 +40,8 @@ sdm845
 sdm765/sdm765g
 sdm730/sdm730g - Boosted
 sdm710/sdm712 - Boosted
-sdm685
-sdm680 - Boosted
+sdm685 - Boosted
+sdm680 - Boosted, Margin
 sdm675 - Boosted
 sdm662 - Boosted
 sdm665 - Boosted
