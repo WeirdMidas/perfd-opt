@@ -13,8 +13,9 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 ## Features
 
 - **Specific optimizations** - for Snapdragon SOCs that have EAS Scheduler and WALT Tracker
-- **Automatic hardware detection** - Detects CPU architecture (4+4, 6+2, 4+3+1, 6+1+1), GPU type, and UFS availability
+- **Automatic hardware detection** - Detects CPU architecture (4+4, 6+2, 4+3+1, 6+1+1), Type of EAS and WALT (Generic or Full), GPU type, and UFS availability
 - **Implementation of `Rice-to-idle` strategy** - for better performance by finding the most efficient frequency to solve the task without demanding maximum from the SOC, and then: ramping down quickly without residual consumption
+- **Tuning for UFS/EMMC Storage** - Improve storage behavior based on the SOC. With specific tuning options as well as choosing the best I/O algorithm based on predictability even in the worst-case scenario
 - **Customizable profile configurations** - Edit profile settings via easy-to-understand `.txt` files
 - **Persistent configuration storage**:
   - Profile configs: `/sdcard/Android/panel_powercfg.txt`
@@ -26,10 +27,8 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Structural Tunings in the EAS Scheduler** - Optimize the EAS to improve decisions about the best core for each task, while reducing the need for unnecessary boosts of high-performance cores, without requiring conservative migration margins
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations, allowing certain WALT parameters to be adapted according to the generation and needs of the SOC
 - **Tuning the QTI Boost Framework** - For example: Improving the scheduler's response to various performance demands. However, this optimization is selective, meaning that SOCs with the "-Boosted" prefix will have this feature
-   - **Improved QTI Framework Structure** - Instead of just adjusting Qualcomm's Boost Framework, we also implemented deeper improvements to Qualcomm's internal framework, such as disabling and enabling unnecessary/useful services to leverage the SOC. SOCs with these improvements have the prefix "- Revamped"
 - **Configured to use both Schedtune and Uclamp** - To improve task placement and use of higher frequencies, such as in demanding games or tasks that require high CPU capacity
 - **Improvements to the Display Refresh Rate** - Improve display behavior and refresh rates (90Hz+) to make the device smarter and more efficient in handling on-screen content
-- **Memory Management Improvements** - Through optimizations in the Qualcomm framework, we implemented effective memory management optimizations. However, since this is not the module's focus, these are minor improvements that only enhance the stability of process queues during heavy multitasking
 - **Miscellaneous Tunings** - For example: disabling camera perflock for SOCs that have the Uclamp or Schedtune camera-daemon directory, allowing the EAS + WALT Tracker to efficiently manage the camera's processing needs
 
 ## Supported SOCs at the moment
@@ -41,8 +40,8 @@ sdm845
 sdm765/sdm765g
 sdm730/sdm730g - Boosted
 sdm710/sdm712 - Boosted
-sdm685 - Boosted, Revamped
-sdm680 - Boosted, Revamped
+sdm685 - Boosted
+sdm680 - Boosted
 sdm675 - Boosted
 sdm662 - Boosted
 sdm665 - Boosted
@@ -51,14 +50,15 @@ sdm652
 sdm636
 ```
 
-## Requirements
+## Requirements and Recommendations
 
 - Devices with Snapdragon SOC that have the EAS Scheduler
-- Snapdragon device that is using WALT as a tracker instead of PELT
+- Ideally, your SOC should be using WALT instead of PELT
 - Android 8.0 or higher
-- A non-unstable ROM or custom kernel
-  - It is recommended to use the module in a Stock ROM or a ROM that uses CAF components
-- Magisk, MAYBE other Root Managers are compatible, but it's not guaranteed
+- Stock ROM or a Custom ROM that uses CAF components
+- Use a stock kernel or a custom kernel with CAF/CodeLinaro components
+- Magisk (or another root manager, but be aware that it may not be as compatible)
+  - KernelSU is having problems with the module, especially in kernels with poor implementation of it, be careful
 - Have busybox installed (Optional)
 
 ## Installation
