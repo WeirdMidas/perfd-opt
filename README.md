@@ -15,7 +15,6 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Specific optimizations** - for Snapdragon SOCs that have EAS Scheduler and WALT Tracker
 - **Automatic hardware detection** - Detects CPU architecture (4+4, 6+2, 4+3+1, 6+1+1), Type of EAS and WALT (Generic or Full), GPU type, and UFS availability
 - **Implementation of `Rice-to-idle` strategy** - for better performance by finding the most efficient frequency to solve the task without demanding maximum from the SOC, and then: ramping down quickly without residual consumption
-- **Tuning for UFS/EMMC Storage** - Improve storage behavior based on the SOC. With specific tuning options as well as choosing the best I/O algorithm based on predictability even in the worst-case scenario
 - **Customizable profile configurations** - Edit profile settings via easy-to-understand `.txt` files
 - **Persistent configuration storage**:
   - Profile configs: `/sdcard/Android/panel_powercfg.txt`
