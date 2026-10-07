@@ -6,7 +6,7 @@
 
 The previous [Project WIPE](https://github.com/yc9559/cpufreq-interactive-opt), automatically adjust the `interactive` parameters via simulation and heuristic optimization algorithms, and working on all mainstream devices which use `interactive` as default governor. The recent [WIPE v2](https://github.com/yc9559/wipe-v2), improved simulation supports more features of the kernel and focuses on rendering performance requirements, automatically adjusting the `interactive`+`HMP`+`input boost` parameters. However, after the EAS is merged into the mainline, the simulation difficulty of auto-tuning depends on raise. It is difficult to simulate the logic of the EAS scheduler. In addition, EAS is designed to avoid parameterization at the beginning of design, so for example, the adjustment of schedutil has no obvious effect
 
-While the project [WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further for devices with HMP. However, with perfd-opt we seek a different alternative to EAS, which involves `QTI Boost Framework`  and extends the ability of override custom parameters. When launching APPs or scrolling the screen, apply more aggressive parameters and run at a higher energy efficiency OPP under heavy load to improve response at an acceptable power penalty. When there is no interaction, use conservative parameters, use small core clusters as much as possible, reduce the refresh rate to the minimum the SOC supports, and with that: we save as much energy as possible while the device is in standby, or even idle/suspended mode
+While the project [WIPE v2](https://github.com/yc9559/wipe-v2) focuses on meeting performance requirements when interacting with APP, while reducing non-interactive lag weights, pushing the trade-off between fluency and power saving even further for devices with HMP. However, with perfd-opt we seek a different alternative to EAS, which involves `QTI Boost Framework`  and extends the ability of override custom parameters. When launching APPs or scrolling the screen, apply more aggressive parameters and run at a higher energy efficiency OPP under heavy load to improve response at an acceptable power penalty. When there is no interaction, use conservative parameters, use small cluster as much as possible, reduce the refresh rate to the minimum the SOC supports, and with that: we save as much energy as possible while the device is in standby, or even idle/suspended mode
 
 Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/master) & [perfd-opt commits](https://github.com/yc9559/perfd-opt/commits/master)    
 
@@ -26,7 +26,6 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Structural Tunings in the EAS Scheduler** - Optimize the EAS to improve decisions about the best core for each task, while reducing the need for unnecessary boosts of high-performance cores, without requiring conservative migration margins
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations, allowing certain WALT parameters to be adapted according to the generation and needs of the SOC
 - **Tuning the QTI Boost Framework** - For example: Improving the scheduler's response to various performance demands. However, this optimization is selective, meaning that SOCs with the "- Boosted" prefix will have this feature
-  - **Input Boost Disabled** - Through precise tuning of the scheduler, CPU governor, and QTI Boost Framework, we eliminated the need to use input boost, allowing each SOC to individually respond to the task with precision
   - **Improved Memory Management** - By tuning the Qualcomm framework, disabling unnecessary background services, and improving how cached processes are managed, the memory margin is slightly increased and the way LMK selects its kills is improved
 - **Configured to use both Schedtune and Uclamp** - To improve task placement and use of higher frequencies, such as in demanding games or tasks that require high CPU capacity
 - **Improvements to the Display Refresh Rate** - Improve display behavior and refresh rates (90Hz+) to make the device smarter and more efficient in handling on-screen content
@@ -39,7 +38,7 @@ sdm865
 sdm855/sdm855+
 sdm845
 sdm765/sdm765g
-sdm730/sdm730g - Boosted
+sdm730/sdm730g/sdm732 - Boosted
 sdm710/sdm712 - Boosted
 sdm685 - Boosted
 sdm680 - Boosted
@@ -54,6 +53,7 @@ sdm636
 ## Requirements and Recommendations
 
 - Have a device with a Snapdragon processor that includes Scheduler EAS and WALT Tracker
+  - Not compatible with HMP or PELT; please check if your ROM/Kernel uses one of them to avoid any issues
 - Android 8.0 or higher
 - Stock ROM or a Custom ROM that uses CAF/CodeLinaro components
 - Use a stock kernel or a custom kernel with CAF/CodeLinaro components
@@ -85,6 +85,7 @@ sdm636
 - Studies on how Qualcomm's WALT Tracker works (both the full and generic versions)
 - Several Qualcomm vendors containing the hint opcodes and some explanations of how the QTI Boost Framework works
 - My own studies on the EAS scheduler and methods for selecting the best CPU core
+- Some studies involving Intel on how they manage their thermal TDP and how we can adapt that for Snapdragon SoCs
 
 ## Switch modes
 
