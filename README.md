@@ -15,21 +15,19 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Specific optimizations** - for Snapdragon SOCs that have EAS Scheduler and WALT Tracker
 - **Automatic hardware detection** - Detects CPU architecture (4+4, 6+2, 4+3+1, 6+1+1), Type of EAS and WALT (Generic or Full), GPU type, and UFS availability
 - **Implementation of `Rice-to-idle` strategy** - for better performance by finding the most efficient frequency to solve the task without demanding maximum from the SOC, and then: ramping down quickly without residual consumption
-- **Customizable profile configurations** - Edit profile settings via easy-to-understand `.txt` files
-- **Persistent configuration storage**:
-  - Profile configs: `/sdcard/Android/panel_powercfg.txt`
 - **Power modes**:
   - **`powersave`**: Designed for basic tasks like messaging and calls
-  - **`balance`**: Ideal for most workloads, with lower power consumption than the stock config
+  - **`balance`**: Ideal for most users, with lower power consumption than the stock config
   - **`performance`**: It modifies the scheduler to be more performance-oriented, seeking total frame stability
   - **`fast`**: Providing stable performance capacity considering the TDP limitation of device chassis
 - **Structural Tunings in the EAS Scheduler** - Optimize the EAS to improve decisions about the best core for each task, while reducing the need for unnecessary boosts of high-performance cores, without requiring conservative migration margins
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations, allowing certain WALT parameters to be adapted according to the generation and needs of the SOC
 - **Tuning the QTI Boost Framework** - For example: Improving the scheduler's response to various performance demands. However, this optimization is selective, meaning that SOCs with the "- Boosted" prefix will have this feature
   - **Improved Memory Management** - By tuning the Qualcomm framework, disabling unnecessary background services, and improving how cached processes are managed, the memory margin is slightly increased and the way LMK selects its kills is improved
+- **Tune Camera Behavior** - By further tuning the Qualcomm framework, we implemented tunings in the powerhint.xml configuration file, which contains perflocks for the camera. This allowed us to improve the raw camera performance and the sustained performance of the device, reducing stutters that occur when using the camera. To find out if your SOC has this tuning, just check if it has the prefix "- CamBoost"
 - **Configured to use both Schedtune and Uclamp** - To improve task placement and use of higher frequencies, such as in demanding games or tasks that require high CPU capacity
 - **Improvements to the Display Refresh Rate** - Improve display behavior and refresh rates (90Hz+) to make the device smarter and more efficient in handling on-screen content
-- **Miscellaneous Tunings** - For example: disabling camera perflock for SOCs that have the Uclamp or Schedtune camera-daemon directory, allowing the EAS + WALT Tracker to efficiently manage the camera's processing needs
+- **Miscellaneous Tunings** - Improvements such as disabling background services to free up CPU and other miscellaneous improvements based on the needs of each SOC
 
 ## Supported SOCs at the moment
 
@@ -41,7 +39,7 @@ sdm765/sdm765g
 sdm730/sdm730g/sdm732 - Boosted
 sdm710/sdm712 - Boosted
 sdm685 - Boosted
-sdm680 - Boosted
+sdm680 - Boosted, CamBoost
 sdm675 - Boosted
 sdm662 - Boosted
 sdm665 - Boosted
@@ -86,6 +84,7 @@ sdm636
 - Several Qualcomm vendors containing the hint opcodes and some explanations of how the QTI Boost Framework works
 - My own studies on the EAS scheduler and methods for selecting the best CPU core
 - Some studies involving Intel on how they manage their thermal TDP and how we can adapt that for Snapdragon SoCs
+- ... And a few other things that I can't mention here, otherwise it would be a spoiler
 
 ## Switch modes
 
