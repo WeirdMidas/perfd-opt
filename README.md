@@ -19,13 +19,16 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
   - **`powersave`**: Designed for basic tasks like messaging and calls
   - **`balance`**: Ideal for most users, with lower power consumption than the stock config
   - **`performance`**: It modifies the scheduler to be more performance-oriented, seeking total frame stability
-  - **`fast`**: Providing stable performance capacity considering the TDP limitation of device chassis, perfect for benchmarks
+  - **`fast`**: Providing stable performance capacity considering the TDP limitation of device chassis
 - **Structural Tunings in the EAS Scheduler** - Optimize how EAS selects the best cores, avoid over-boosting in the high-performance cluster, and allow EAS to efficiently package tasks onto efficiency cluster to save power whenever possible, making the EAS of generic devices as close as possible to that of well-tuned devices
   - **Improve the asymmetric behavior of the CPU Architecture** - Make the efficiency cluster support the high-performance cluster, instead of following a "sending everything to the high-performance cluster" behavior, make the high-performance and efficiency clusters work together, both respecting their limitations. This slightly increases the thermal headroom and allows the high-performance cluster to always be ready for UI tasks
+  - **Improved single-thread and multi-thread performance** - By improving the scheduling method, we've made the scheduler's latency sensitivity better, allowing the CPU to deliver more stable and predictable work even at lower clock speeds by placing the task on the correct core at millisecond 0. Furthermore, we've improved cache locality, enhancing cache hits and reducing task ping-pong
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations, allowing certain WALT parameters to be adapted according to the generation and needs of the SOC
-- **Tuning the QTI Boost Framework** - For example, to improve the scheduler and governor's response to intermittent loads, allowing for predictable performance based on the needs and capabilities of each individual SoC
+- **Tuning the QTI Boost Framework** - For example, to improve the scheduler and governor's response to intermittent loads, allowing for boosted and bigger performance based on the needs and capabilities of each individual SoC
+  - **Implementation of "Boost" Frequency** - Instead of simply reducing the maximum frequency for a more efficient OPP, allow the high-performance cluster to reach its maximum frequency when required, such as during app switching, opening, etc
   - **Improved Memory Management** - By tuning the Qualcomm framework, disabling unnecessary background services, and improving how cached processes are managed, the memory margin is slightly increased and the way LMK selects its kills is improved
-- **Tune Camera Behavior** - By tuning the Qualcomm `powerhint.xml` , we can improve the camera's perflocks. This improves frame rate stability, efficiency, and raw camera performance with efficient scheduling and no overhead.
+- **Tune Camera Behavior** - By tuning the Qualcomm `powerhint.xml` , we can improve the camera's perflocks. This improves frame rate stability, efficiency, and raw camera performance with efficient scheduling and no overhead
+- **Improvements to Thermal-Engine** - Tuning of the thermal engine to improve how the SoC manages thermal throttling, improving the headroom of these SoCs while reducing accumulated heat, which reduces power consumption under heavy load
 - **Configured to use Schedtune or Uclamp** - To improve task placement and use of higher frequencies, such as in demanding games or tasks that require high CPU capacity
 - **Improvements to the Display Refresh Rate** - Improvements to display behavior, including specific tuning of how the display manages refresh rates, making the decision to switch between low (60Hz) and higher (90Hz-144Hz) refresh rates more efficient and faster
 - **Miscellaneous Tunings** - Improvements such as disabling background services to free up CPU and other miscellaneous improvements based on the needs of each SOC
@@ -34,32 +37,32 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 
 ```plain
 SDM730/SDM730G/SDM732
-- powersave:    max 1.7+1.9g, min 0.3+0.6g
-- balance:      max 1.7+2.2g, min 0.5+0.6g
+- powersave:    max 1.8+1.9g, boost 1.8+2.2g, min 0.3+0.6g
+- balance:      max 1.8+1.9g, boost 1.8+2.2g, min 0.5+0.6g
 - performance:  max 1.8+2.2g, min 0.5+0.6g
 - fast:         max 1.8+2.2g, min 0.5+1.2g
 
 SDM710/SDM712 
-- powersave:    max 1.7+1.8g, min 0.3+0.6g
-- balance:      max 1.7+2.0g, min 0.5+0.6g
+- powersave:    max 1.7+1.8g, boost 1.7+2.2g, min 0.3+0.6g
+- balance:      max 1.7+2.0g, boost 1.7+2.2g, min 0.5+0.6g
 - performance:  max 1.7+2.2g, min 0.5+0.6g
 - fast:         max 1.7+2.2g, min 0.5+1.5g
 
 SDM685
-- powersave:    max 1.9+2.2g, min 0.3+1.0g
-- balance:      max 1.9+2.5g, min 0.6+1.0g
+- powersave:    max 1.9+2.2g, boost 1.9+2.8g, min 0.3+1.0g
+- balance:      max 1.9+2.4g, boost 1.9+2.8g, min 0.6+1.0g
 - performance:  max 1.9+2.8g, min 0.6+1.0g
 - fast:         max 1.9+2.8g, min 0.6+1.3g
 
 SDM680
-- powersave:    max 1.9+1.7g, min 0.3+1.0g
-- balance:      max 1.9+2.2g, min 0.6+1.0g
+- powersave:    max 1.9+1.7g, boost 1.9+2.4g, min 0.3+1.0g
+- balance:      max 1.9+2.2g, boost 1.9+2.4g, min 0.6+1.0g
 - performance:  max 1.9+2.4g, min 0.6+1.0g
 - fast:         max 1.9+2.4g, min 0.6+1.3g
 
 SDM675
-- powersave:    max 1.7+1.7g, min 0.3+0.3
-- balance:      max 1.7+1.7g, min 0.5+0.6
+- powersave:    max 1.8+1.7g, boost 1.8+2.0g, min 0.3+0.3
+- balance:      max 1.8+1.7g, boost 1.8+2.0g, min 0.5+0.6
 - performance:  max 1.8+2.0g, min 0.5+0.6
 - fast:         max 1.8+2.0g, min 0.5+1.2
 
@@ -74,6 +77,7 @@ SDM665
 
 - Have a device with a Snapdragon processor that includes Scheduler EAS and WALT Tracker
   - Not compatible with HMP or PELT; please check if your ROM/Kernel uses one of them to avoid any issues
+- Use a thermal-engine from: qualcomm (MSM), the common thermal-engine, or mi_thermald; other thermals do not receive improvements
 - Android 8.0 or higher
 - Stock ROM or a Custom ROM that uses CAF/CodeLinaro components
 - Use a stock kernel or a custom kernel with CAF/CodeLinaro components
