@@ -79,14 +79,11 @@ SDM665
 
 - Have a device with a Snapdragon processor that includes Scheduler EAS and WALT Tracker
   - Not compatible with HMP or PELT; please check if your ROM/Kernel uses one of them to avoid any issues
-- Use a thermal-engine from: qualcomm (MSM), the common thermal-engine, or mi_thermald; other thermals do not receive improvements
 - Android 8.0 or higher
 - Stock ROM or a Custom ROM that uses CAF/CodeLinaro components
-- Use a stock kernel or a custom kernel with CAF/CodeLinaro components
-- Your ROM should have the QTI Boost Framework (optional, only if your SOC is listed as supporting such optimizations and you want them)
+- Stock kernel or a custom kernel with CAF/CodeLinaro components
+- Make sure your ROM didn't discard the QTI Boost Framework in favor of another Boost Framework like Libperfmgr, etc
 - Magisk or another root manager
-  - KernelSU is having problems with the module, especially in kernels with poor implementation of it, be careful
-- Have busybox installed (Optional)
 
 ---
 
@@ -108,6 +105,10 @@ SDM665
 ### Sources
 
 - No sources available other than citations
+
+### Suggestion/Request to add a SoC to perfd-opt
+
+If you want a SoC you own added to perfd ​​opt, see our [SoC addition protocol](https://github.com/WeirdMidas/perfd-opt/blob/master/HowToSuggestSupportToASoC.md) for more information on how to do this in our issues
 
 ## Switch modes
 
