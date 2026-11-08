@@ -15,6 +15,7 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Specific optimizations** - for Snapdragon SOCs that have EAS Scheduler and WALT Tracker
 - **Automatic hardware detection** - Detects CPU architecture (4+4, 6+2, 4+3+1, 6+1+1, Big.LITTLE, DynamlQ), Governor used by System (Schedutil or Walt), EAS and WALT used (Generic or Full), GPU type, and UFS availability
 - **Implementation of `Rice-to-idle` strategy** - for better performance by finding the most efficient frequency to solve the task without demanding maximum from the SOC, and then: ramping down quickly without residual consumption
+  - **Implementation of "Boost" Frequency** - Instead of simply reducing the maximum frequency for a more efficient OPP, allow the high-performance cluster to reach its maximum frequency when required, such as during app switching, pre-flinger, etc
 - **Power modes**:
   - **`powersave`**: Designed for basic tasks like messaging and calls
   - **`balance`**: Ideal for most users, with lower power consumption than the stock config
@@ -23,10 +24,11 @@ Details see [the lead project](https://github.com/yc9559/sdm855-tune/commits/mas
 - **Structural Tunings in the EAS Scheduler** - Optimize how EAS selects the best cores, avoid over-boosting in the high-performance cluster, and allow EAS to efficiently package tasks onto efficiency cluster to save power whenever possible, making the EAS of generic devices as close as possible to that of well-tuned devices
   - **Improve the asymmetric behavior of the CPU Architecture** - Make the efficiency cluster support the high-performance cluster, instead of following a "sending everything to the high-performance cluster" behavior, make the high-performance and efficiency clusters work together, both respecting their limitations. This slightly increases the thermal headroom and allows the high-performance cluster to always be ready for UI tasks
   - **Improved single-thread and multi-thread performance** - By improving the scheduling method, we've made the scheduler's latency sensitivity better, allowing the CPU to deliver more stable and predictable work even at lower clock speeds by placing the task on the correct core at millisecond 0. Furthermore, we've improved cache locality, enhancing cache hits and reducing task ping-pong
+  - **Improved process queue management for reduced CPU pressure** - Improve the way task queues are managed to reduce CPU pressure, reducing overall scheduling latency and increasing efficiency in task packaging (we aim for 8% or less pressure on mid-range processors, such as the SDM680, which has 10% pressure in standby)
 - **Compatible with full and generic WALT** - For better tuning between different Snapdragon generations, allowing certain WALT parameters to be adapted according to the generation and needs of the SOC
 - **Tuning the QTI Boost Framework** - For example, to improve the scheduler and governor's response to intermittent loads, allowing for boosted and bigger performance based on the needs and capabilities of each individual SoC
-  - **Implementation of "Boost" Frequency** - Instead of simply reducing the maximum frequency for a more efficient OPP, allow the high-performance cluster to reach its maximum frequency when required, such as during app switching, opening, etc
   - **Improved Memory Management** - By tuning the Qualcomm framework, disabling unnecessary background services, and improving how cached processes are managed, the memory margin is slightly increased and the way LMK selects its kills is improved
+- **Algorithm for selecting the ideal I/O scheduler for UFS storage + Specific tuning for CFQ (for legacy SoCs)** - The module also chooses the best I/O algorithm for UFS storage based on availability; if the SoC still uses CFQ, it is tuned to make this scheduler more appropriate for flash storage
 - **Tune Camera Behavior** - By tuning the Qualcomm `powerhint.xml` , we can improve the camera's perflocks. This improves frame rate stability, efficiency, and raw camera performance with efficient scheduling and no overhead
 - **Improvements to Thermal-Engine** - Tuning of the thermal engine to improve how the SoC manages thermal throttling, improving the headroom of these SoCs while reducing accumulated heat, which reduces power consumption under heavy load
 - **Configured to use Schedtune or Uclamp** - To improve task placement and use of higher frequencies, such as in demanding games or tasks that require high CPU capacity
@@ -46,7 +48,7 @@ SDM710/SDM712
 - powersave:    max 1.7+1.8g, boost 1.7+2.2g, min 0.3+0.6g
 - balance:      max 1.7+2.0g, boost 1.7+2.2g, min 0.5+0.6g
 - performance:  max 1.7+2.2g, min 0.5+0.6g
-- fast:         max 1.7+2.2g, min 0.5+1.5g
+- fast:         max 1.7+2.2g, min 0.5+1.1g
 
 SDM685
 - powersave:    max 1.9+2.2g, boost 1.9+2.8g, min 0.3+1.0g
